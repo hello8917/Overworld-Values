@@ -14,85 +14,43 @@
   --bg3: #2a1e0a; --bg4: #3a2a0a; --text: #e8d8a0;
   --text-dim: #a08850; --border: #7a5c1a;
   --green: #80c040; --red: #e05030;
-  --roblox: #e8392a; --discord: #5865f2;
 }
 html, body { height: 100%; }
 body { background: var(--bg); color: var(--text); font-family: 'Lato', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
-
-.header {
-  background: linear-gradient(135deg, #2a1800 0%, #1a1208 40%, #2a1800 100%);
-  border-bottom: 2px solid var(--gold-dark);
-  padding: 18px 32px 14px; text-align: center; position: relative; overflow: hidden; flex-shrink: 0;
-}
-.header::before {
-  content: ''; position: absolute; inset: 0;
-  background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(120,90,20,0.05) 40px, rgba(120,90,20,0.05) 80px);
-  pointer-events: none;
-}
+.header { background: linear-gradient(135deg, #2a1800 0%, #1a1208 40%, #2a1800 100%); border-bottom: 2px solid var(--gold-dark); padding: 18px 32px 14px; text-align: center; position: relative; overflow: hidden; flex-shrink: 0; }
+.header::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(120,90,20,0.05) 40px, rgba(120,90,20,0.05) 80px); pointer-events: none; }
 .header h1 { font-family: 'Cinzel', serif; font-size: clamp(24px, 4vw, 44px); font-weight: 600; color: var(--gold); letter-spacing: 0.08em; text-shadow: 0 0 40px rgba(240,192,64,0.3); position: relative; }
 .header p { font-size: 12px; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.12em; text-transform: uppercase; position: relative; }
-
-/* HEADER LINKS */
 .header-links { display: flex; justify-content: center; gap: 10px; margin-top: 12px; position: relative; flex-wrap: wrap; }
-.header-link {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 700;
-  text-decoration: none; transition: all 0.2s; letter-spacing: 0.04em; border: 2px solid transparent;
-}
-.header-link.roblox {
-  background: rgba(232,57,42,0.15); color: #ff6b5b; border-color: rgba(232,57,42,0.4);
-}
+.header-link { display: inline-flex; align-items: center; gap: 7px; padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; text-decoration: none; transition: all 0.2s; letter-spacing: 0.04em; border: 2px solid transparent; }
+.header-link.roblox { background: rgba(232,57,42,0.15); color: #ff6b5b; border-color: rgba(232,57,42,0.4); }
 .header-link.roblox:hover { background: rgba(232,57,42,0.28); border-color: #e8392a; color: #ff8878; }
-.header-link.discord {
-  background: rgba(88,101,242,0.15); color: #8b95ff; border-color: rgba(88,101,242,0.4);
-}
+.header-link.discord { background: rgba(88,101,242,0.15); color: #8b95ff; border-color: rgba(88,101,242,0.4); }
 .header-link.discord:hover { background: rgba(88,101,242,0.28); border-color: #5865f2; color: #aab2ff; }
-.header-link svg { flex-shrink: 0; }
-
 .nav { background: var(--bg4); border-bottom: 1px solid var(--border); display: flex; flex-shrink: 0; }
-.nav-btn {
-  flex: 1; padding: 13px 20px; background: none; border: none;
-  color: var(--text-dim); font-family: 'Cinzel', serif; font-size: 13px;
-  letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s;
-  border-bottom: 3px solid transparent;
-}
+.nav-btn { flex: 1; padding: 13px 10px; background: none; border: none; color: var(--text-dim); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; border-bottom: 3px solid transparent; }
 .nav-btn:hover { color: var(--gold-dim); background: var(--bg3); }
 .nav-btn.active { color: var(--gold); border-bottom-color: var(--gold); background: var(--bg3); }
-.nav-btn .nav-icon { margin-right: 8px; font-size: 14px; }
-
-.page { display: none; flex: 1; flex-direction: column; }
+.nav-btn .nav-icon { margin-right: 6px; font-size: 13px; }
+.page { display: none; flex: 1; flex-direction: column; min-height: 0; }
 .page.active { display: flex; flex-direction: column; }
-
 /* VALUES */
-.controls {
-  background: var(--bg3); border-bottom: 1px solid var(--border);
-  padding: 12px 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; flex-shrink: 0;
-}
+.controls { background: var(--bg3); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
 .search-wrap { flex: 1; min-width: 200px; position: relative; }
 .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); pointer-events: none; }
-.search-wrap input {
-  width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-  padding: 9px 12px 9px 38px; color: var(--text); font-family: 'Lato', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s;
-}
+.search-wrap input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px 9px 38px; color: var(--text); font-family: 'Lato', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
 .search-wrap input:focus { border-color: var(--gold); }
 .search-wrap input::placeholder { color: var(--text-dim); }
-select {
-  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-  padding: 9px 14px; color: var(--text); font-family: 'Lato', sans-serif; font-size: 14px; outline: none; cursor: pointer;
-}
-select:focus { border-color: var(--gold); }
-.item-count { padding: 7px 20px; background: var(--bg2); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-dim); letter-spacing: 0.05em; flex-shrink: 0; }
+select { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 9px 14px; color: var(--text); font-family: 'Lato', sans-serif; font-size: 14px; outline: none; cursor: pointer; }
+.item-count { padding: 7px 20px; background: var(--bg2); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-dim); flex-shrink: 0; }
 .item-count span { color: var(--gold); font-weight: 700; }
-
+.slash-hint { float: right; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 11px; color: var(--text-dim); font-family: monospace; }
 .cat-bar { display:flex; flex-wrap:wrap; gap:7px; padding:10px 20px; background:var(--bg2); border-bottom:1px solid var(--border); flex-shrink:0; }
-.cat-pill { padding:5px 14px; border-radius:20px; font-size:12px; font-weight:700; background:var(--bg3); color:var(--text-dim); border:1px solid var(--border); cursor:pointer; transition:all 0.15s; letter-spacing:0.04em; }
+.cat-pill { padding:5px 14px; border-radius:20px; font-size:12px; font-weight:700; background:var(--bg3); color:var(--text-dim); border:1px solid var(--border); cursor:pointer; transition:all 0.15s; }
 .cat-pill:hover { border-color:var(--gold-dim); color:var(--gold-dim); }
 .cat-pill.active { background:var(--gold-deeper); color:var(--gold); border-color:var(--gold); }
-.cat-pill.all-pill.active { background:var(--gold-deeper); color:var(--gold); border-color:var(--gold); }
 .th-arr { font-size:11px; margin-left:4px; opacity:0.5; }
 th.sorted .th-arr { opacity:1; color:var(--gold); }
-
-.slash-hint { float: right; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 11px; color: var(--text-dim); font-family: monospace; }
 .table-wrap { overflow: auto; flex: 1; }
 table { width: 100%; border-collapse: collapse; min-width: 520px; }
 thead { background: var(--bg4); position: sticky; top: 0; z-index: 10; }
@@ -105,14 +63,13 @@ tr:hover td { background: var(--bg3); }
 .item-name { font-weight: 700; color: var(--text); font-size: 15px; }
 .val { font-family: 'Cinzel', serif; font-weight: 600; color: var(--gold); font-size: 15px; }
 .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-.badge.high   { background: #3a2800; color: #f0a020; border: 1px solid #7a5000; }
+.badge.high { background: #3a2800; color: #f0a020; border: 1px solid #7a5000; }
 .badge.medium { background: #1a2a00; color: #80c040; border: 1px solid #406000; }
-.badge.low    { background: #1a0a00; color: #c06040; border: 1px solid #603020; }
+.badge.low { background: #1a0a00; color: #c06040; border: 1px solid #603020; }
 .cat { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; background: var(--bg3); color: var(--gold-dim); border: 1px solid var(--gold-deeper); }
 .empty, .loading-msg, .err-msg { text-align: center; padding: 50px; color: var(--text-dim); font-size: 14px; }
 .err-msg { color: #c06040; }
-
-/* TRADE */
+/* TRADE CALC */
 .trade-main { display: grid; grid-template-columns: 1fr 1fr; flex: 1; overflow: hidden; }
 .side { padding: 16px; border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
 .side:last-child { border-right: none; }
@@ -120,18 +77,10 @@ tr:hover td { background: var(--bg3); }
 .side-title { font-family: 'Cinzel', serif; font-size: 15px; color: var(--gold); letter-spacing: 0.06em; }
 .side-total { font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold); }
 .add-area { position: relative; }
-.add-area input {
-  width: 100%; background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 8px; padding: 10px 14px; color: var(--text);
-  font-family: 'Lato', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s;
-}
+.add-area input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: 'Lato', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
 .add-area input:focus { border-color: var(--gold); }
 .add-area input::placeholder { color: var(--text-dim); }
-.dropdown {
-  position: absolute; top: 100%; left: 0; right: 0; z-index: 200;
-  background: var(--bg4); border: 1px solid var(--border); border-top: none;
-  border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto; display: none;
-}
+.dropdown { position: absolute; top: 100%; left: 0; right: 0; z-index: 200; background: var(--bg4); border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto; display: none; }
 .dropdown.open { display: block; }
 .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; cursor: pointer; transition: background 0.1s; font-size: 13px; }
 .dropdown-item:hover { background: var(--bg3); }
@@ -161,8 +110,6 @@ tr:hover td { background: var(--bg3); }
 .add-placeholder:hover { border-color: var(--gold); background: var(--bg3); }
 .clear-btn { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-dim); font-family: 'Lato', sans-serif; font-size: 12px; padding: 4px 10px; cursor: pointer; transition: all 0.15s; }
 .clear-btn:hover { border-color: var(--red); color: var(--red); }
-
-/* RESULT BAR */
 .result-bar { background: var(--bg4); border-top: 2px solid var(--border); padding: 14px 24px; flex-shrink: 0; }
 .bar-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; color: var(--text-dim); }
 .bar-row strong { color: var(--gold); font-family: 'Cinzel', serif; font-size: 15px; }
@@ -172,9 +119,11 @@ tr:hover td { background: var(--bg3); }
 .verdict.win { color: var(--green); }
 .verdict.lose { color: var(--red); }
 .verdict.even { color: var(--gold); }
-.screenshot-btn { display: block; width: 100%; padding: 9px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--gold-dim); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; text-align: center; }
+.result-btns { display: flex; gap: 8px; }
+.screenshot-btn { flex: 1; padding: 9px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--gold-dim); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; text-align: center; }
 .screenshot-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--bg4); }
-
+.post-trade-btn { flex: 1; padding: 9px; background: rgba(240,192,64,0.12); border: 1px solid var(--gold-dark); border-radius: 8px; color: var(--gold); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; text-align: center; }
+.post-trade-btn:hover { background: rgba(240,192,64,0.22); border-color: var(--gold); }
 /* SCREENSHOT OVERLAY */
 .ss-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; flex-direction: column; gap: 14px; }
 .ss-overlay.open { display: flex; }
@@ -198,15 +147,68 @@ tr:hover td { background: var(--bg3); }
 .ss-btn:hover { border-color: var(--gold); color: var(--gold); }
 .ss-btn.primary { background: var(--gold-dark); border-color: var(--gold); color: var(--gold); }
 .ss-btn.primary:hover { background: #8a6c2a; }
-
+/* POST TRADE OVERLAY */
+.pt-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; }
+.pt-overlay.open { display: flex; }
+.pt-card { background: #1a1208; border: 2px solid var(--gold-dark); border-radius: 12px; padding: 24px; width: min(480px, 92vw); }
+.pt-title { font-family: 'Cinzel', serif; color: var(--gold); font-size: 17px; text-align: center; margin-bottom: 18px; letter-spacing: 0.08em; }
+.pt-field { margin-bottom: 14px; }
+.pt-label { font-size: 12px; color: var(--text-dim); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+.pt-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: 'Lato', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.pt-input:focus { border-color: var(--gold); }
+.pt-input::placeholder { color: var(--text-dim); }
+.pt-preview { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 14px; font-size: 13px; }
+.pt-preview-row { display: flex; justify-content: space-between; margin-bottom: 5px; gap: 10px; }
+.pt-preview-label { color: var(--text-dim); white-space: nowrap; }
+.pt-preview-val { color: var(--gold); font-family: 'Cinzel', serif; }
+.pt-actions { display: flex; gap: 10px; }
+.pt-btn { flex: 1; padding: 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg3); color: var(--gold-dim); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; }
+.pt-btn:hover { border-color: var(--gold); color: var(--gold); }
+.pt-btn.primary { background: var(--gold-dark); border-color: var(--gold); color: var(--gold); }
+.pt-btn.primary:hover { background: #8a6c2a; }
+.pt-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+/* TRADE BOARD */
+.tb-controls { background: var(--bg3); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
+.tb-search { flex: 1; min-width: 160px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 9px 14px; color: var(--text); font-family: 'Lato', sans-serif; font-size: 14px; outline: none; }
+.tb-search:focus { border-color: var(--gold); }
+.tb-search::placeholder { color: var(--text-dim); }
+.tb-refresh { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-dim); font-family: 'Lato', sans-serif; font-size: 12px; padding: 6px 14px; cursor: pointer; transition: all 0.15s; }
+.tb-refresh:hover { border-color: var(--gold); color: var(--gold); }
+.tb-count { padding: 7px 20px; background: var(--bg2); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-dim); flex-shrink: 0; }
+.tb-count span { color: var(--gold); font-weight: 700; }
+.tb-list { overflow-y: auto; flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.tb-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; transition: border-color 0.2s; }
+.tb-card:hover { border-color: var(--gold-dim); }
+.tb-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.tb-user { display: flex; align-items: center; gap: 8px; }
+.tb-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--gold-deeper); border: 1px solid var(--gold-dark); display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold); font-weight: 600; flex-shrink: 0; }
+.tb-username { font-weight: 700; font-size: 14px; color: var(--text); }
+.tb-time { font-size: 11px; color: var(--text-dim); }
+.tb-meta { display: flex; align-items: center; gap: 8px; }
+.tb-expires { font-size: 11px; color: var(--text-dim); }
+.tb-delete { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 15px; padding: 2px 6px; border-radius: 4px; transition: color 0.15s; }
+.tb-delete:hover { color: var(--red); }
+.tb-sides { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: start; }
+.tb-side-label { font-family: 'Cinzel', serif; font-size: 10px; color: var(--gold-dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+.tb-items { display: flex; flex-direction: column; gap: 5px; }
+.tb-item { display: flex; align-items: center; gap: 7px; font-size: 13px; }
+.tb-item img { width: 28px; height: 28px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border); background: var(--bg2); flex-shrink: 0; }
+.tb-item-ph { width: 28px; height: 28px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-dim); flex-shrink: 0; }
+.tb-item-name { flex: 1; color: var(--text); }
+.tb-item-val { color: var(--gold); font-family: 'Cinzel', serif; font-size: 11px; white-space: nowrap; }
+.tb-arrow { font-size: 22px; color: var(--gold-dim); text-align: center; padding-top: 20px; }
+.tb-totals { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-dim); }
+.tb-totals strong { color: var(--gold); font-family: 'Cinzel', serif; }
+.tb-desc { margin-top: 8px; font-size: 13px; color: var(--text-dim); font-style: italic; border-top: 1px solid var(--border); padding-top: 8px; }
+.tb-empty { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 14px; }
+.tb-empty-icon { font-size: 36px; margin-bottom: 12px; }
 .footer { text-align: center; padding: 12px; font-size: 11px; color: var(--text-dim); border-top: 1px solid var(--border); background: var(--bg3); letter-spacing: 0.08em; text-transform: uppercase; flex-shrink: 0; }
-
 @media (max-width: 600px) {
   .trade-main { grid-template-columns: 1fr; overflow: visible; }
   .side { border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; }
   .ss-sides { grid-template-columns: 1fr; }
-  .header-links { gap: 8px; }
-  .header-link { font-size: 12px; padding: 6px 12px; }
+  .tb-sides { grid-template-columns: 1fr; }
+  .tb-arrow { transform: rotate(90deg); padding-top: 0; }
 }
 </style>
 </head>
@@ -216,7 +218,6 @@ tr:hover td { background: var(--bg3); }
   <h1>Overworld Values</h1>
   <p>Live item tracker &amp; trade calculator</p>
   <div class="header-links">
-    <!-- REPLACE THE HREF VALUES BELOW WITH YOUR ACTUAL LINKS -->
     <a class="header-link roblox" href="https://www.roblox.com/games/119364915719874" target="_blank" rel="noopener">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M5.832 23.428L.572 5.772 18.228.512l5.26 17.656zM15.54 9.522l-5.984 1.781 1.782 5.983 5.984-1.78z"/></svg>
       Play on Roblox
@@ -229,12 +230,9 @@ tr:hover td { background: var(--bg3); }
 </div>
 
 <nav class="nav">
-  <button class="nav-btn active" onclick="showPage('values')" id="nav-values">
-    <span class="nav-icon">📋</span>Value List
-  </button>
-  <button class="nav-btn" onclick="showPage('trade')" id="nav-trade">
-    <span class="nav-icon">⚖️</span>Trade Calculator
-  </button>
+  <button class="nav-btn active" onclick="showPage('values')" id="nav-values"><span class="nav-icon">📋</span>Value List</button>
+  <button class="nav-btn" onclick="showPage('trade')" id="nav-trade"><span class="nav-icon">⚖️</span>Trade Calc</button>
+  <button class="nav-btn" onclick="showPage('board');loadBoard()" id="nav-board"><span class="nav-icon">📣</span>Trade Board</button>
 </nav>
 
 <!-- VALUES PAGE -->
@@ -250,27 +248,24 @@ tr:hover td { background: var(--bg3); }
       <option value="Medium">Medium</option>
       <option value="Low">Low</option>
     </select>
-    
   </div>
   <div class="cat-bar" id="cat-bar"></div>
   <div class="item-count">Showing <span id="v-count">—</span> items <span class="slash-hint">/ to search</span></div>
   <div class="table-wrap">
     <table>
-      <thead>
-        <tr>
-          <th style="width:68px;cursor:default">Image</th>
-          <th id="th-name" onclick="thSort('name')">Item <span class="th-arr" id="arr-name"></span></th>
-          <th id="th-cat" onclick="thSort('cat')">Category <span class="th-arr" id="arr-cat"></span></th>
-          <th id="th-value" onclick="thSort('value')" class="sorted">Value <span class="th-arr" id="arr-value">&#8595;</span></th>
-          <th id="th-demand" onclick="thSort('demand')">Demand <span class="th-arr" id="arr-demand"></span></th>
-        </tr>
-      </thead>
+      <thead><tr>
+        <th style="width:68px;cursor:default">Image</th>
+        <th id="th-name" onclick="thSort('name')">Item <span class="th-arr" id="arr-name"></span></th>
+        <th id="th-cat" onclick="thSort('cat')">Category <span class="th-arr" id="arr-cat"></span></th>
+        <th id="th-value" onclick="thSort('value')" class="sorted">Value <span class="th-arr" id="arr-value">↓</span></th>
+        <th id="th-demand" onclick="thSort('demand')">Demand <span class="th-arr" id="arr-demand"></span></th>
+      </tr></thead>
       <tbody id="v-tbody"><tr><td colspan="5" class="loading-msg">Loading items...</td></tr></tbody>
     </table>
   </div>
 </div>
 
-<!-- TRADE PAGE -->
+<!-- TRADE CALC PAGE -->
 <div class="page" id="page-trade">
   <div class="trade-main">
     <div class="side">
@@ -309,27 +304,30 @@ tr:hover td { background: var(--bg3); }
     </div>
     <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:50%"></div></div>
     <div class="verdict even" id="verdict">Add items to compare</div>
-    <button class="screenshot-btn" onclick="openScreenshot()">📸 Generate Trade Screenshot</button>
+    <div class="result-btns">
+      <button class="screenshot-btn" onclick="openScreenshot()">📸 Screenshot</button>
+      <button class="post-trade-btn" onclick="openPostTrade()">📣 Post to Trade Board</button>
+    </div>
   </div>
 </div>
 
+<!-- TRADE BOARD PAGE -->
+<div class="page" id="page-board">
+  <div class="tb-controls">
+    <input type="text" class="tb-search" id="tb-search" placeholder="Search by item name or username..." oninput="filterBoard()">
+    <button class="tb-refresh" onclick="loadBoard()">↻ Refresh</button>
+  </div>
+  <div class="tb-count">Showing <span id="tb-count">—</span> active trades</div>
+  <div class="tb-list" id="tb-list"><div class="tb-empty"><div class="tb-empty-icon">📣</div>Loading trades...</div></div>
+</div>
+
 <!-- SCREENSHOT OVERLAY -->
-<div class="ss-overlay" id="ss-overlay" onclick="closeScreenshotOutside(event)">
-  <div class="ss-card" id="ss-card">
+<div class="ss-overlay" id="ss-overlay" onclick="if(event.target===this)closeScreenshot()">
+  <div class="ss-card">
     <div class="ss-title">Overworld Trade</div>
     <div class="ss-sides">
-      <div>
-        <div class="ss-side-title">YOUR OFFER</div>
-        <div id="ss-your"></div>
-        <hr class="ss-divider">
-        <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold)" id="ss-your-total"></div>
-      </div>
-      <div>
-        <div class="ss-side-title">THEIR OFFER</div>
-        <div id="ss-their"></div>
-        <hr class="ss-divider">
-        <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold)" id="ss-their-total"></div>
-      </div>
+      <div><div class="ss-side-title">YOUR OFFER</div><div id="ss-your"></div><hr class="ss-divider"><div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold)" id="ss-your-total"></div></div>
+      <div><div class="ss-side-title">THEIR OFFER</div><div id="ss-their"></div><hr class="ss-divider"><div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold)" id="ss-their-total"></div></div>
     </div>
     <div class="ss-verdict even" id="ss-verdict"></div>
     <div class="ss-watermark">overworld values</div>
@@ -340,35 +338,35 @@ tr:hover td { background: var(--bg3); }
   </div>
 </div>
 
+<!-- POST TRADE OVERLAY -->
+<div class="pt-overlay" id="pt-overlay" onclick="if(event.target===this)closePT()">
+  <div class="pt-card">
+    <div class="pt-title">📣 Post to Trade Board</div>
+    <div class="pt-field">
+      <label class="pt-label">Your Roblox Username</label>
+      <input type="text" class="pt-input" id="pt-username" placeholder="e.g. Zackscott919" maxlength="30">
+    </div>
+    <div class="pt-field">
+      <label class="pt-label">Description (optional)</label>
+      <input type="text" class="pt-input" id="pt-desc" placeholder="e.g. DM me in-game! Open to offers." maxlength="120">
+    </div>
+    <div class="pt-preview" id="pt-preview"></div>
+    <div class="pt-actions">
+      <button class="pt-btn primary" id="pt-submit" onclick="submitTrade()">Post Trade</button>
+      <button class="pt-btn" onclick="closePT()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <div class="footer">Data pulled live from Google Sheets &bull; Overworld Values<br><span style="font-size:0.85em;opacity:0.75;">Developer: Zackscott919 &bull; Data Collector: Ultraball278</span></div>
 
 <script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNK7YRxISteAHufA7Be7Tpr56o2Yji0SpupmN01wwRDZs2UGlofcIwrEtGX-gHYzsfI9BePZCM-VdU/pub?gid=0&single=true&output=csv";
-const demandOrder = {High:3,Medium:2,Low:1};
-let allItems=[], yourItems=[], theirItems=[];
-let selectedCats=new Set(), sortCol="value", sortDir="desc";
-
-function thSort(col){
-  if(sortCol===col){ sortDir=sortDir==="asc"?"desc":"asc"; }
-  else { sortCol=col; sortDir=col==="value"||col==="demand"?"desc":"asc"; }
-  updateThHeaders();
-  renderValues();
-}
-
-function updateThHeaders(){
-  ["name","cat","value","demand"].forEach(c=>{
-    const th=document.getElementById("th-"+c);
-    const arr=document.getElementById("arr-"+c);
-    if(!th||!arr) return;
-    if(c===sortCol){
-      th.classList.add("sorted");
-      arr.textContent=sortDir==="asc"?"↑":"↓";
-    } else {
-      th.classList.remove("sorted");
-      arr.textContent="";
-    }
-  });
-}
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQNK7YRxISteAHufA7Be7Tpr56o2Yji0SpupmN01wwRDZs2UGlofcIwrEtGX-gHYzsfI9BePZCM-VdU/pub?gid=0&single=true&output=csv";
+const SB_URL="https://xmyzcahkfgnebxnjkjhg.supabase.co";
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhteXpjYWhrZmduZWJ4bmpramhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTQxNDAsImV4cCI6MjA5MTU5MDE0MH0.1ZX3nUjmnyq50MqU835hIz7bKhm2EOVbbFpGvx4mz-8";
+const demandOrder={High:3,Medium:2,Low:1};
+let allItems=[],yourItems=[],theirItems=[],allTrades=[];
+let sortCol="value",sortDir="desc",selectedCats=new Set();
 
 function showPage(p){
   document.querySelectorAll(".page").forEach(el=>el.classList.remove("active"));
@@ -379,46 +377,42 @@ function showPage(p){
 
 function parseCSV(text){
   return text.trim().split("\n").slice(1).map(row=>{
-    const cols=[]; let cur="",inQ=false;
-    for(let i=0;i<row.length;i++){
-      const ch=row[i];
-      if(ch==='"'){inQ=!inQ;}
-      else if(ch===','&&!inQ){cols.push(cur.trim());cur="";}
-      else{cur+=ch;}
-    }
+    const cols=[];let cur="",inQ=false;
+    for(let i=0;i<row.length;i++){const ch=row[i];if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cols.push(cur.trim());cur="";}else{cur+=ch;}}
     cols.push(cur.trim());
-    return {name:cols[0]||"",value:parseInt((cols[1]||"0").replace(/[^0-9]/g,""))||0,demand:cols[2]||"",image:cols[3]||"",category:cols[4]||""};
+    return{name:cols[0]||"",value:parseInt((cols[1]||"0").replace(/[^0-9]/g,""))||0,demand:cols[2]||"",image:cols[3]||"",category:cols[4]||""};
   }).filter(i=>i.name);
 }
 
 document.addEventListener("keydown",e=>{
-  if(e.key==="/" && document.activeElement.tagName!=="INPUT"){
-    e.preventDefault();
-    showPage("values");
-    document.getElementById("v-search").focus();
-  }
+  if(e.key==="/"&&document.activeElement.tagName!=="INPUT"){e.preventDefault();showPage("values");document.getElementById("v-search").focus();}
 });
+
+function thSort(col){
+  if(sortCol===col)sortDir=sortDir==="asc"?"desc":"asc";
+  else{sortCol=col;sortDir=col==="value"?"desc":"asc";}
+  ["name","cat","value","demand"].forEach(c=>{
+    const th=document.getElementById("th-"+c),arr=document.getElementById("arr-"+c);
+    if(c===sortCol){th.classList.add("sorted");arr.textContent=sortDir==="asc"?"↑":"↓";}
+    else{th.classList.remove("sorted");arr.textContent="";}
+  });
+  renderValues();
+}
 
 function populateCats(){
   const cats=[...new Set(allItems.map(i=>i.category).filter(Boolean))].sort();
   const bar=document.getElementById("cat-bar");
-  let html=`<span class="cat-pill all-pill active" onclick="toggleCat('__all__')">All</span>`;
+  let html=`<span class="cat-pill active" onclick="toggleCat('__all__')">All</span>`;
   cats.forEach(c=>{html+=`<span class="cat-pill" onclick="toggleCat('${c}')">${c}</span>`;});
   bar.innerHTML=html;
 }
 
 function toggleCat(c){
-  if(c==="__all__"){
-    selectedCats.clear();
-  } else {
-    if(selectedCats.has(c)) selectedCats.delete(c);
-    else selectedCats.add(c);
-  }
-  // update pill active states
-  document.querySelectorAll(".cat-pill").forEach(p=>{
-    const isAll=p.classList.contains("all-pill");
-    if(isAll) p.classList.toggle("active", selectedCats.size===0);
-    else p.classList.toggle("active", selectedCats.has(p.textContent));
+  if(c==="__all__"){selectedCats.clear();}
+  else{if(selectedCats.has(c))selectedCats.delete(c);else selectedCats.add(c);}
+  document.querySelectorAll(".cat-pill").forEach((p,i)=>{
+    if(i===0)p.classList.toggle("active",selectedCats.size===0);
+    else p.classList.toggle("active",selectedCats.has(p.textContent));
   });
   renderValues();
 }
@@ -442,16 +436,10 @@ function renderValues(){
   });
   document.getElementById("v-count").textContent=list.length;
   const tb=document.getElementById("v-tbody");
-  if(!list.length){tb.innerHTML=`<tr><td colspan="5" class="empty">No items match your filters.</td></tr>`;return;}
+  if(!list.length){tb.innerHTML=`<tr><td colspan="5" class="empty">No items match.</td></tr>`;return;}
   tb.innerHTML=list.map(i=>{
     const d=(i.demand||"").toLowerCase();
-    return `<tr>
-      <td>${i.image?`<img class="item-img" src="${i.image}" alt="${i.name}" loading="lazy" onerror="this.outerHTML='<div class=\\'img-ph\\'>?</div>'">`:`<div class="img-ph">?</div>`}</td>
-      <td><span class="item-name">${i.name}</span></td>
-      <td>${i.category?`<span class="cat">${i.category}</span>`:""}</td>
-      <td><span class="val">${i.value.toLocaleString()}</span></td>
-      <td>${i.demand?`<span class="badge ${d}">${i.demand}</span>`:""}</td>
-    </tr>`;
+    return`<tr><td>${i.image?`<img class="item-img" src="${i.image}" alt="${i.name}" loading="lazy" onerror="this.outerHTML='<div class=\\'img-ph\\'>?</div>'">`:`<div class="img-ph">?</div>`}</td><td><span class="item-name">${i.name}</span></td><td>${i.category?`<span class="cat">${i.category}</span>`:""}</td><td><span class="val">${i.value.toLocaleString()}</span></td><td>${i.demand?`<span class="badge ${d}">${i.demand}</span>`:""}</td></tr>`;
   }).join("");
 }
 
@@ -461,133 +449,61 @@ function onSearch(side){
   if(!q){drop.classList.remove("open");drop.innerHTML="";return;}
   const results=allItems.filter(i=>i.name.toLowerCase().includes(q)).slice(0,10);
   if(!results.length){drop.innerHTML=`<div class="no-results">No items found</div>`;drop.classList.add("open");return;}
-  drop.innerHTML=results.map(i=>`
-    <div class="dropdown-item" onclick="addItem('${side}',${allItems.indexOf(i)})">
-      ${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\\'di-ph\\'>?</div>'">`:`<div class="di-ph">?</div>`}
-      <span class="di-name">${i.name}</span>
-      <span class="di-val">${i.value.toLocaleString()}</span>
-    </div>`).join("");
+  drop.innerHTML=results.map(i=>`<div class="dropdown-item" onclick="addItem('${side}',${allItems.indexOf(i)})">${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\\'di-ph\\'>?</div>'">`:`<div class="di-ph">?</div>`}<span class="di-name">${i.name}</span><span class="di-val">${i.value.toLocaleString()}</span></div>`).join("");
   drop.classList.add("open");
 }
-
-function openDrop(side){
-  if(document.getElementById(`search-${side}`).value) onSearch(side);
-}
-
+function openDrop(side){if(document.getElementById(`search-${side}`).value)onSearch(side);}
 function addItem(side,idx){
   const item={...allItems[idx],qty:1};
-  if(side==='you') yourItems.push(item);
-  else theirItems.push(item);
+  if(side==='you')yourItems.push(item);else theirItems.push(item);
   document.getElementById(`search-${side}`).value="";
   document.getElementById(`drop-${side}`).classList.remove("open");
-  renderSide(side);
-  updateResult();
+  renderSide(side);updateResult();
 }
-
-function removeItem(side,idx){
-  if(side==='you') yourItems.splice(idx,1);
-  else theirItems.splice(idx,1);
-  renderSide(side);
-  updateResult();
-}
-
-function clearSide(side){
-  if(side==='you') yourItems=[];
-  else theirItems=[];
-  renderSide(side);
-  updateResult();
-}
-
+function removeItem(side,idx){if(side==='you')yourItems.splice(idx,1);else theirItems.splice(idx,1);renderSide(side);updateResult();}
+function clearSide(side){if(side==='you')yourItems=[];else theirItems=[];renderSide(side);updateResult();}
 function updateQty(side,idx,val){
   const qty=Math.max(1,parseInt(val)||1);
-  if(side==='you') yourItems[idx].qty=qty;
-  else theirItems[idx].qty=qty;
-  const totalSpan=document.getElementById(`qty-total-${side}-${idx}`);
   const items=side==='you'?yourItems:theirItems;
-  if(totalSpan) totalSpan.textContent=(items[idx].value*qty).toLocaleString();
+  items[idx].qty=qty;
+  const span=document.getElementById(`qty-total-${side}-${idx}`);
+  if(span)span.textContent=(items[idx].value*qty).toLocaleString();
   updateResult();
-  const sideTotal=items.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
-  document.getElementById(side==='you'?'your-total':'their-total').textContent=sideTotal.toLocaleString();
+  document.getElementById(side==='you'?'your-total':'their-total').textContent=items.reduce((s,i)=>s+(i.value*(i.qty||1)),0).toLocaleString();
 }
-
 function copyQtyValue(side,idx,btnEl){
   const items=side==='you'?yourItems:theirItems;
-  const item=items[idx];
-  const total=(item.value*(item.qty||1)).toLocaleString();
-  navigator.clipboard.writeText(total).then(()=>{
-    btnEl.textContent="Copied!";
-    btnEl.classList.add("copied");
-    setTimeout(()=>{btnEl.textContent="Copy";btnEl.classList.remove("copied");},1500);
-  });
+  navigator.clipboard.writeText((items[idx].value*(items[idx].qty||1)).toLocaleString()).then(()=>{btnEl.textContent="Copied!";btnEl.classList.add("copied");setTimeout(()=>{btnEl.textContent="Copy";btnEl.classList.remove("copied");},1500);});
 }
-
 function renderSide(side){
   const items=side==='you'?yourItems:theirItems;
-  const total=items.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
-  document.getElementById(side==='you'?'your-total':'their-total').textContent=total.toLocaleString();
+  document.getElementById(side==='you'?'your-total':'their-total').textContent=items.reduce((s,i)=>s+(i.value*(i.qty||1)),0).toLocaleString();
   const list=document.getElementById(`items-${side}`);
-  if(!items.length){
-    list.innerHTML=`<div class="add-placeholder" onclick="document.getElementById('search-${side}').focus()">+ Add an item to this offer</div>`;
-    return;
-  }
-  list.innerHTML=items.map((i,idx)=>`
-    <div class="trade-item">
-      ${i.image?`<img src="${i.image}" alt="${i.name}" style="width:46px;height:46px;border-radius:6px;object-fit:cover;border:1px solid var(--border);background:var(--bg2);flex-shrink:0" onerror="this.outerHTML='<div class=\\'ti-ph\\'>?</div>'">`:`<div class="ti-ph">?</div>`}
-      <div class="ti-info">
-        <div class="ti-name">${i.name}</div>
-        <div class="ti-val">${i.value.toLocaleString()} each</div>
-        <div class="ti-qty-row">
-          <span class="ti-qty-label">Qty:</span>
-          <input class="ti-qty-input" type="number" min="1" value="${i.qty||1}" oninput="updateQty('${side}',${idx},this.value)">
-          <span class="ti-qty-label">= </span>
-          <span class="ti-qty-total" id="qty-total-${side}-${idx}">${(i.value*(i.qty||1)).toLocaleString()}</span>
-          <button class="ti-copy-qty" onclick="copyQtyValue('${side}',${idx},this)">Copy</button>
-        </div>
-      </div>
-      <button class="ti-remove" onclick="removeItem('${side}',${idx})">&#x2715;</button>
-    </div>`).join("");
+  if(!items.length){list.innerHTML=`<div class="add-placeholder" onclick="document.getElementById('search-${side}').focus()">+ Add an item to this offer</div>`;return;}
+  list.innerHTML=items.map((i,idx)=>`<div class="trade-item">${i.image?`<img src="${i.image}" alt="${i.name}" style="width:46px;height:46px;border-radius:6px;object-fit:cover;border:1px solid var(--border);background:var(--bg2);flex-shrink:0" onerror="this.outerHTML='<div class=\\'ti-ph\\'>?</div>'">`:`<div class="ti-ph">?</div>`}<div class="ti-info"><div class="ti-name">${i.name}</div><div class="ti-val">${i.value.toLocaleString()} each</div><div class="ti-qty-row"><span class="ti-qty-label">Qty:</span><input class="ti-qty-input" type="number" min="1" value="${i.qty||1}" oninput="updateQty('${side}',${idx},this.value)"><span class="ti-qty-label">= </span><span class="ti-qty-total" id="qty-total-${side}-${idx}">${(i.value*(i.qty||1)).toLocaleString()}</span><button class="ti-copy-qty" onclick="copyQtyValue('${side}',${idx},this)">Copy</button></div></div><button class="ti-remove" onclick="removeItem('${side}',${idx})">&#x2715;</button></div>`).join("");
 }
-
 function updateResult(){
   const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
   const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
   document.getElementById("bar-you").textContent=you.toLocaleString();
   document.getElementById("bar-them").textContent=them.toLocaleString();
-  const fill=document.getElementById("progress-fill");
-  const verdict=document.getElementById("verdict");
-  const total=you+them;
+  const total=you+them,fill=document.getElementById("progress-fill"),verdict=document.getElementById("verdict");
   if(!total){fill.style.width="50%";verdict.textContent="Add items to compare";verdict.className="verdict even";return;}
   fill.style.width=Math.round((you/total)*100)+"%";
-  const diff=you-them;
-  const pct=them>0?Math.round((Math.abs(diff)/them)*100):100;
-  if(Math.abs(diff)<Math.max(you,them)*0.05){
-    verdict.textContent="Fair trade ✓";verdict.className="verdict even";
-  } else if(diff>0){
-    verdict.textContent=`You're overpaying by ${Math.abs(diff).toLocaleString()} (${pct}%)`;verdict.className="verdict lose";
-  } else {
-    verdict.textContent=`You're winning by ${Math.abs(diff).toLocaleString()} (${pct}%)`;verdict.className="verdict win";
-  }
+  const diff=you-them,pct=them>0?Math.round((Math.abs(diff)/them)*100):100;
+  if(Math.abs(diff)<Math.max(you,them)*0.05){verdict.textContent="Fair trade ✓";verdict.className="verdict even";}
+  else if(diff>0){verdict.textContent=`You're overpaying by ${Math.abs(diff).toLocaleString()} (${pct}%)`;verdict.className="verdict lose";}
+  else{verdict.textContent=`You're winning by ${Math.abs(diff).toLocaleString()} (${pct}%)`;verdict.className="verdict win";}
 }
 
 function openScreenshot(){
   const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
   const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
-  function renderSS(items,elId){
-    const el=document.getElementById(elId);
-    if(!items.length){el.innerHTML=`<div style="color:var(--text-dim);font-size:12px">No items</div>`;return;}
-    el.innerHTML=items.map(i=>`
-      <div class="ss-item">
-        ${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\\'ss-item-ph\\'>?</div>'">`:`<div class="ss-item-ph">?</div>`}
-        <span class="ss-item-name">${i.qty>1?`${i.qty}x `:""}${i.name}</span>
-        <span class="ss-item-val">${(i.value*(i.qty||1)).toLocaleString()}</span>
-      </div>`).join("");
-  }
-  renderSS(yourItems,"ss-your");
-  renderSS(theirItems,"ss-their");
+  function rSS(items,elId){const el=document.getElementById(elId);if(!items.length){el.innerHTML=`<div style="color:var(--text-dim);font-size:12px">No items</div>`;return;}el.innerHTML=items.map(i=>`<div class="ss-item">${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\\'ss-item-ph\\'>?</div>'">`:`<div class="ss-item-ph">?</div>`}<span class="ss-item-name">${i.qty>1?`${i.qty}x `:""} ${i.name}</span><span class="ss-item-val">${(i.value*(i.qty||1)).toLocaleString()}</span></div>`).join("");}
+  rSS(yourItems,"ss-your");rSS(theirItems,"ss-their");
   document.getElementById("ss-your-total").textContent=you.toLocaleString();
   document.getElementById("ss-their-total").textContent=them.toLocaleString();
-  const diff=you-them;
-  const pct=them>0?Math.round((Math.abs(diff)/them)*100):100;
+  const diff=you-them,pct=them>0?Math.round((Math.abs(diff)/them)*100):100;
   const sv=document.getElementById("ss-verdict");
   if(!you&&!them){sv.textContent="No items added";sv.className="ss-verdict even";}
   else if(Math.abs(diff)<Math.max(you,them)*0.05){sv.textContent="Fair trade ✓";sv.className="ss-verdict even";}
@@ -595,42 +511,141 @@ function openScreenshot(){
   else{sv.textContent=`You win by ${Math.abs(diff).toLocaleString()} (${pct}%)`;sv.className="ss-verdict win";}
   document.getElementById("ss-overlay").classList.add("open");
 }
-
-function closeScreenshot(){ document.getElementById("ss-overlay").classList.remove("open"); }
-function closeScreenshotOutside(e){ if(e.target===document.getElementById("ss-overlay")) closeScreenshot(); }
-
+function closeScreenshot(){document.getElementById("ss-overlay").classList.remove("open");}
 function copyScreenshot(){
   const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
   const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
-  const diff=you-them;
-  const pct=them>0?Math.round((Math.abs(diff)/them)*100):100;
-  let verdict="";
-  if(!you&&!them) verdict="No items";
-  else if(Math.abs(diff)<Math.max(you,them)*0.05) verdict="Fair trade ✓";
-  else if(diff>0) verdict=`You overpay by ${Math.abs(diff).toLocaleString()} (${pct}%)`;
-  else verdict=`You win by ${Math.abs(diff).toLocaleString()} (${pct}%)`;
-  const yourLines=yourItems.map(i=>`  ${i.qty>1?i.qty+"x ":""}${i.name} — ${(i.value*(i.qty||1)).toLocaleString()}`).join("\n")||"  (none)";
-  const theirLines=theirItems.map(i=>`  ${i.qty>1?i.qty+"x ":""}${i.name} — ${(i.value*(i.qty||1)).toLocaleString()}`).join("\n")||"  (none)";
-  const text=`⚖️ Overworld Trade\n\n📦 Your Offer (${you.toLocaleString()}):\n${yourLines}\n\n📦 Their Offer (${them.toLocaleString()}):\n${theirLines}\n\n${verdict}\n\n— Overworld Values`;
-  navigator.clipboard.writeText(text).then(()=>{
-    const btn=document.querySelector(".ss-btn.primary");
-    btn.textContent="✓ Copied!";
-    setTimeout(()=>btn.textContent="📋 Copy as Text",2000);
-  });
+  const diff=you-them,pct=them>0?Math.round((Math.abs(diff)/them)*100):100;
+  let v="";if(!you&&!them)v="No items";else if(Math.abs(diff)<Math.max(you,them)*0.05)v="Fair trade ✓";else if(diff>0)v=`You overpay by ${Math.abs(diff).toLocaleString()} (${pct}%)`;else v=`You win by ${Math.abs(diff).toLocaleString()} (${pct}%)`;
+  const yL=yourItems.map(i=>`  ${i.qty>1?i.qty+"x ":""}${i.name} — ${(i.value*(i.qty||1)).toLocaleString()}`).join("\n")||"  (none)";
+  const tL=theirItems.map(i=>`  ${i.qty>1?i.qty+"x ":""}${i.name} — ${(i.value*(i.qty||1)).toLocaleString()}`).join("\n")||"  (none)";
+  navigator.clipboard.writeText(`⚖️ Overworld Trade\n\n📦 Your Offer (${you.toLocaleString()}):\n${yL}\n\n📦 Their Offer (${them.toLocaleString()}):\n${tL}\n\n${v}\n\n— Overworld Values`).then(()=>{const btn=document.querySelector(".ss-btn.primary");btn.textContent="✓ Copied!";setTimeout(()=>btn.textContent="📋 Copy as Text",2000);});
+}
+
+function openPostTrade(){
+  if(!yourItems.length&&!theirItems.length){alert("Add items to the Trade Calculator first!");return;}
+  const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const yN=yourItems.map(i=>(i.qty>1?`${i.qty}x `:"")+i.name).join(", ")||"Nothing";
+  const tN=theirItems.map(i=>(i.qty>1?`${i.qty}x `:"")+i.name).join(", ")||"Nothing";
+  document.getElementById("pt-preview").innerHTML=`
+    <div class="pt-preview-row"><span class="pt-preview-label">Offering:</span><span style="text-align:right;color:var(--text)">${yN}</span></div>
+    <div class="pt-preview-row"><span class="pt-preview-label">Offering value:</span><span class="pt-preview-val">${you.toLocaleString()}</span></div>
+    <div class="pt-preview-row" style="margin-top:6px"><span class="pt-preview-label">Wanting:</span><span style="text-align:right;color:var(--text)">${tN}</span></div>
+    <div class="pt-preview-row"><span class="pt-preview-label">Wanting value:</span><span class="pt-preview-val">${them.toLocaleString()}</span></div>`;
+  document.getElementById("pt-overlay").classList.add("open");
+}
+function closePT(){document.getElementById("pt-overlay").classList.remove("open");}
+
+async function submitTrade(){
+  const username=document.getElementById("pt-username").value.trim();
+  if(!username){alert("Please enter your Roblox username!");return;}
+  const desc=document.getElementById("pt-desc").value.trim();
+  const btn=document.getElementById("pt-submit");
+  btn.disabled=true;btn.textContent="Posting...";
+  const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const offering=yourItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
+  const wanting=theirItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
+  try{
+    const res=await fetch(`${SB_URL}/rest/v1/trades`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`,"Prefer":"return=minimal"},
+      body:JSON.stringify({username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null})
+    });
+    if(!res.ok)throw new Error();
+    closePT();
+    document.getElementById("pt-username").value="";
+    document.getElementById("pt-desc").value="";
+    showPage("board");loadBoard();
+  }catch(e){alert("Failed to post. Please try again.");}
+  btn.disabled=false;btn.textContent="Post Trade";
+}
+
+async function loadBoard(){
+  document.getElementById("tb-list").innerHTML=`<div class="tb-empty"><div class="tb-empty-icon">⏳</div>Loading trades...</div>`;
+  try{
+    const cutoff=new Date(Date.now()-24*60*60*1000).toISOString();
+    const res=await fetch(`${SB_URL}/rest/v1/trades?created_at=gte.${encodeURIComponent(cutoff)}&order=created_at.desc`,{
+      headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`}
+    });
+    allTrades=await res.json();
+    filterBoard();
+  }catch(e){
+    document.getElementById("tb-list").innerHTML=`<div class="tb-empty">⚠️ Failed to load trades.</div>`;
+  }
+}
+
+function filterBoard(){
+  const q=(document.getElementById("tb-search").value||"").toLowerCase();
+  const list=q?allTrades.filter(t=>{
+    const names=[...t.offering,...t.wanting].map(i=>i.name.toLowerCase());
+    return t.username.toLowerCase().includes(q)||names.some(n=>n.includes(q));
+  }):allTrades;
+  document.getElementById("tb-count").textContent=list.length;
+  const el=document.getElementById("tb-list");
+  if(!list.length){
+    el.innerHTML=`<div class="tb-empty"><div class="tb-empty-icon">📭</div>${allTrades.length?"No trades match your search.":"No active trades yet — be the first to post one!"}</div>`;
+    return;
+  }
+  function itemsHTML(items){
+    if(!items||!items.length)return`<span style="color:var(--text-dim);font-size:12px">Nothing</span>`;
+    return items.map(i=>`<div class="tb-item">${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\\'tb-item-ph\\'>?</div>'">`:`<div class="tb-item-ph">?</div>`}<span class="tb-item-name">${i.qty>1?`${i.qty}x `:""} ${i.name}</span><span class="tb-item-val">${(i.value*(i.qty||1)).toLocaleString()}</span></div>`).join("");
+  }
+  el.innerHTML=list.map(t=>`
+    <div class="tb-card">
+      <div class="tb-card-header">
+        <div class="tb-user">
+          <div class="tb-avatar">${(t.username||"?")[0].toUpperCase()}</div>
+          <div><div class="tb-username">${t.username}</div><div class="tb-time">${timeAgo(t.created_at)}</div></div>
+        </div>
+        <div class="tb-meta">
+          <span class="tb-expires">expires ${expiresIn(t.created_at)}</span>
+          <button class="tb-delete" onclick="deleteTrade('${t.id}',this)" title="Delete this listing">🗑️</button>
+        </div>
+      </div>
+      <div class="tb-sides">
+        <div><div class="tb-side-label">Offering</div><div class="tb-items">${itemsHTML(t.offering)}</div></div>
+        <div class="tb-arrow">→</div>
+        <div><div class="tb-side-label">Wanting</div><div class="tb-items">${itemsHTML(t.wanting)}</div></div>
+      </div>
+      <div class="tb-totals">
+        <span>Offering: <strong>${(t.offering_total||0).toLocaleString()}</strong></span>
+        <span>Wanting: <strong>${(t.wanting_total||0).toLocaleString()}</strong></span>
+      </div>
+      ${t.description?`<div class="tb-desc">"${t.description}"</div>`:""}
+    </div>`).join("");
+}
+
+async function deleteTrade(id,btn){
+  if(!confirm("Delete this trade listing?"))return;
+  btn.disabled=true;
+  try{
+    await fetch(`${SB_URL}/rest/v1/trades?id=eq.${id}`,{method:"DELETE",headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`}});
+    allTrades=allTrades.filter(t=>t.id!==id);filterBoard();
+  }catch(e){alert("Could not delete. Try again.");btn.disabled=false;}
+}
+
+function timeAgo(ts){
+  const diff=Math.floor((Date.now()-new Date(ts))/1000);
+  if(diff<60)return"just now";if(diff<3600)return`${Math.floor(diff/60)}m ago`;
+  if(diff<86400)return`${Math.floor(diff/3600)}h ago`;return`${Math.floor(diff/86400)}d ago`;
+}
+function expiresIn(ts){
+  const ms=86400000-(Date.now()-new Date(ts));
+  if(ms<0)return"soon";
+  const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000);
+  return h>0?`in ${h}h ${m}m`:`in ${m}m`;
 }
 
 document.addEventListener("click",e=>{
-  if(!e.target.closest(".add-area")) document.querySelectorAll(".dropdown").forEach(d=>d.classList.remove("open"));
+  if(!e.target.closest(".add-area"))document.querySelectorAll(".dropdown").forEach(d=>d.classList.remove("open"));
 });
 
 fetch(CSV_URL).then(r=>r.text()).then(text=>{
-  allItems=parseCSV(text);
-  populateCats();
-  renderValues();
-  renderSide("you");
-  renderSide("them");
+  allItems=parseCSV(text);populateCats();renderValues();renderSide("you");renderSide("them");
 }).catch(()=>{
-  document.getElementById("v-tbody").innerHTML=`<tr><td colspan="5" class="err-msg">⚠️ Could not load data. Make sure your sheet is published to the web.</td></tr>`;
+  document.getElementById("v-tbody").innerHTML=`<tr><td colspan="5" class="err-msg">⚠️ Could not load data.</td></tr>`;
 });
 </script>
 </body>
