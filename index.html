@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head> <!-- Add this just before the closing </head> tag -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Overworld Values</title>
@@ -360,11 +360,14 @@ tr:hover td { background: var(--bg3); }
 
 <div class="footer">Data pulled live from Google Sheets &bull; Overworld Values<br><span style="font-size:0.85em;opacity:0.75;">Developer: Zackscott919 &bull; Data Collector: Ultraball278</span></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQNK7YRxISteAHufA7Be7Tpr56o2Yji0SpupmN01wwRDZs2UGlofcIwrEtGX-gHYzsfI9BePZCM-VdU/pub?gid=0&single=true&output=csv";
 const SB_URL="https://xmyzcahkfgnebxnjkjhg.supabase.co";
 const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhteXpjYWhrZmduZWJ4bmpramhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTQxNDAsImV4cCI6MjA5MTU5MDE0MH0.1ZX3nUjmnyq50MqU835hIz7bKhm2EOVbbFpGvx4mz-8";
 const demandOrder={High:3,Medium:2,Low:1};
+const supabase = Supabase.createClient(SB_URL, SB_KEY);
 let allItems=[],yourItems=[],theirItems=[],allTrades=[];
 let sortCol="value",sortDir="desc",selectedCats=new Set();
 
@@ -544,16 +547,59 @@ async function submitTrade() {
     return;
   }
 
-  // Get current user from Supabase Auth
-  const { data: { user } } = await supabase.auth.getUser();
+  let user = (await supabase.auth.getUser()).data.user;
+
+  // Auto sign in anonymously if not signed in
   if (!user) {
-    // Option A: Auto sign in anonymously
     const { data, error } = await supabase.auth.signInAnonymously();
     if (error) {
-      alert("Failed to sign in. Please try again.");
+      alert("Failed to sign in anonymously: " + error.message);
       return;
     }
+    user = data.user;
   }
+
+  const desc = document.getElementById("pt-desc").value.trim();
+  const you = yourItems.reduce((s, i) => s + (i.value * (i.qty || 1)), 0);
+  const them = theirItems.reduce((s, i) => s + (i.value * (i.qty || 1)), 0);
+
+  const offering = yourItems.map(i => ({ 
+    name: i.name, 
+    value: i.value, 
+    qty: i.qty || 1, 
+    image: i.image || "" 
+  }));
+  const wanting = theirItems.map(i => ({ 
+    name: i.name, 
+    value: i.value, 
+    qty: i.qty || 1, 
+    image: i.image || "" 
+  }));
+
+  const { error } = await supabase
+    .from('trades')
+    .insert({
+      username,
+      offering,
+      wanting,
+      offering_total: you,
+      wanting_total: them,
+      description: desc || null,
+      user_id: user.id
+    });
+
+  if (error) {
+    console.error(error);
+    alert("Failed to post trade: " + error.message);
+    return;
+  }
+
+  closePT();
+  document.getElementById("pt-username").value = "";
+  document.getElementById("pt-desc").value = "";
+  showPage("board");
+  loadBoard();
+}
 
   const desc = document.getElementById("pt-desc").value.trim();
   const you = yourItems.reduce((s, i) => s + (i.value * (i.qty || 1)), 0);
