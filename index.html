@@ -14,6 +14,7 @@
   --bg3: #2a1e0a; --bg4: #3a2a0a; --text: #e8d8a0;
   --text-dim: #a08850; --border: #7a5c1a;
   --green: #80c040; --red: #e05030;
+  --roblox: #e8392a; --discord: #5865f2;
 }
 html, body { height: 100%; }
 body { background: var(--bg); color: var(--text); font-family: 'Lato', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
@@ -21,7 +22,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Lato', sans-seri
 .header {
   background: linear-gradient(135deg, #2a1800 0%, #1a1208 40%, #2a1800 100%);
   border-bottom: 2px solid var(--gold-dark);
-  padding: 22px 32px 18px; text-align: center; position: relative; overflow: hidden; flex-shrink: 0;
+  padding: 18px 32px 14px; text-align: center; position: relative; overflow: hidden; flex-shrink: 0;
 }
 .header::before {
   content: ''; position: absolute; inset: 0;
@@ -30,6 +31,23 @@ body { background: var(--bg); color: var(--text); font-family: 'Lato', sans-seri
 }
 .header h1 { font-family: 'Cinzel', serif; font-size: clamp(24px, 4vw, 44px); font-weight: 600; color: var(--gold); letter-spacing: 0.08em; text-shadow: 0 0 40px rgba(240,192,64,0.3); position: relative; }
 .header p { font-size: 12px; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.12em; text-transform: uppercase; position: relative; }
+
+/* HEADER LINKS */
+.header-links { display: flex; justify-content: center; gap: 10px; margin-top: 12px; position: relative; flex-wrap: wrap; }
+.header-link {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 700;
+  text-decoration: none; transition: all 0.2s; letter-spacing: 0.04em; border: 2px solid transparent;
+}
+.header-link.roblox {
+  background: rgba(232,57,42,0.15); color: #ff6b5b; border-color: rgba(232,57,42,0.4);
+}
+.header-link.roblox:hover { background: rgba(232,57,42,0.28); border-color: #e8392a; color: #ff8878; }
+.header-link.discord {
+  background: rgba(88,101,242,0.15); color: #8b95ff; border-color: rgba(88,101,242,0.4);
+}
+.header-link.discord:hover { background: rgba(88,101,242,0.28); border-color: #5865f2; color: #aab2ff; }
+.header-link svg { flex-shrink: 0; }
 
 .nav { background: var(--bg4); border-bottom: 1px solid var(--border); display: flex; flex-shrink: 0; }
 .nav-btn {
@@ -114,8 +132,6 @@ tr:hover td { background: var(--bg3); }
 .di-val { color: var(--gold); font-size: 12px; font-family: 'Cinzel', serif; }
 .no-results { padding: 12px; color: var(--text-dim); font-size: 13px; text-align: center; }
 .items-list { display: flex; flex-direction: column; gap: 8px; }
-
-/* TRADE ITEM with quantity */
 .trade-item { display: flex; align-items: center; gap: 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 9px 11px; flex-wrap: wrap; }
 .trade-item img { width: 46px; height: 46px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); background: var(--bg2); flex-shrink: 0; }
 .ti-ph { width: 46px; height: 46px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg2); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 16px; flex-shrink: 0; }
@@ -124,21 +140,14 @@ tr:hover td { background: var(--bg3); }
 .ti-val { font-family: 'Cinzel', serif; color: var(--gold); font-size: 12px; margin-top: 2px; }
 .ti-qty-row { display: flex; align-items: center; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
 .ti-qty-label { font-size: 11px; color: var(--text-dim); }
-.ti-qty-input {
-  width: 70px; background: var(--bg2); border: 1px solid var(--border); border-radius: 5px;
-  padding: 3px 7px; color: var(--gold); font-family: 'Cinzel', serif; font-size: 12px; outline: none; text-align: center;
-}
+.ti-qty-input { width: 70px; background: var(--bg2); border: 1px solid var(--border); border-radius: 5px; padding: 3px 7px; color: var(--gold); font-family: 'Cinzel', serif; font-size: 12px; outline: none; text-align: center; }
 .ti-qty-input:focus { border-color: var(--gold); }
 .ti-qty-total { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold-dim); }
-.ti-copy-qty {
-  background: var(--bg4); border: 1px solid var(--border); border-radius: 5px;
-  color: var(--text-dim); font-size: 11px; padding: 3px 8px; cursor: pointer; transition: all 0.15s; font-family: 'Lato', sans-serif;
-}
+.ti-copy-qty { background: var(--bg4); border: 1px solid var(--border); border-radius: 5px; color: var(--text-dim); font-size: 11px; padding: 3px 8px; cursor: pointer; transition: all 0.15s; font-family: 'Lato', sans-serif; }
 .ti-copy-qty:hover { border-color: var(--gold); color: var(--gold); }
 .ti-copy-qty.copied { border-color: var(--green); color: var(--green); }
 .ti-remove { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 17px; line-height: 1; padding: 4px; border-radius: 4px; transition: color 0.15s; flex-shrink: 0; align-self: flex-start; }
 .ti-remove:hover { color: var(--red); }
-
 .add-placeholder { border: 1px dashed var(--border); border-radius: 8px; padding: 14px; text-align: center; color: var(--text-dim); font-size: 13px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
 .add-placeholder:hover { border-color: var(--gold); background: var(--bg3); }
 .clear-btn { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-dim); font-family: 'Lato', sans-serif; font-size: 12px; padding: 4px 10px; cursor: pointer; transition: all 0.15s; }
@@ -154,23 +163,13 @@ tr:hover td { background: var(--bg3); }
 .verdict.win { color: var(--green); }
 .verdict.lose { color: var(--red); }
 .verdict.even { color: var(--gold); }
-.screenshot-btn {
-  display: block; width: 100%; padding: 9px; background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 8px; color: var(--gold-dim); font-family: 'Cinzel', serif; font-size: 12px;
-  letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; text-align: center;
-}
+.screenshot-btn { display: block; width: 100%; padding: 9px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--gold-dim); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; text-align: center; }
 .screenshot-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--bg4); }
 
 /* SCREENSHOT OVERLAY */
-.ss-overlay {
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-  z-index: 1000; align-items: center; justify-content: center; flex-direction: column; gap: 14px;
-}
+.ss-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; flex-direction: column; gap: 14px; }
 .ss-overlay.open { display: flex; }
-.ss-card {
-  background: #1a1208; border: 2px solid var(--gold-dark); border-radius: 12px;
-  padding: 24px; min-width: 340px; max-width: 90vw;
-}
+.ss-card { background: #1a1208; border: 2px solid var(--gold-dark); border-radius: 12px; padding: 24px; min-width: 340px; max-width: 90vw; }
 .ss-title { font-family: 'Cinzel', serif; color: var(--gold); font-size: 18px; text-align: center; margin-bottom: 16px; letter-spacing: 0.08em; }
 .ss-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
 .ss-side-title { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold-dim); letter-spacing: 0.06em; margin-bottom: 8px; }
@@ -180,18 +179,13 @@ tr:hover td { background: var(--bg3); }
 .ss-item-name { flex: 1; color: var(--text); }
 .ss-item-val { color: var(--gold); font-family: 'Cinzel', serif; font-size: 12px; }
 .ss-divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
-.ss-totals { display: flex; justify-content: space-between; font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold); margin-bottom: 10px; }
 .ss-verdict { text-align: center; font-size: 13px; font-weight: 700; padding: 8px; border-radius: 6px; }
 .ss-verdict.win { background: #1a2a00; color: var(--green); }
 .ss-verdict.lose { background: #2a0a00; color: var(--red); }
 .ss-verdict.even { background: var(--bg3); color: var(--gold); }
 .ss-watermark { text-align: center; font-size: 10px; color: var(--text-dim); margin-top: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
 .ss-actions { display: flex; gap: 10px; }
-.ss-btn {
-  flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
-  background: var(--bg3); color: var(--gold-dim); font-family: 'Cinzel', serif;
-  font-size: 12px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; text-align: center;
-}
+.ss-btn { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg3); color: var(--gold-dim); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; text-align: center; }
 .ss-btn:hover { border-color: var(--gold); color: var(--gold); }
 .ss-btn.primary { background: var(--gold-dark); border-color: var(--gold); color: var(--gold); }
 .ss-btn.primary:hover { background: #8a6c2a; }
@@ -202,6 +196,8 @@ tr:hover td { background: var(--bg3); }
   .trade-main { grid-template-columns: 1fr; overflow: visible; }
   .side { border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; }
   .ss-sides { grid-template-columns: 1fr; }
+  .header-links { gap: 8px; }
+  .header-link { font-size: 12px; padding: 6px 12px; }
 }
 </style>
 </head>
@@ -210,6 +206,17 @@ tr:hover td { background: var(--bg3); }
 <div class="header">
   <h1>Overworld Values</h1>
   <p>Live item tracker &amp; trade calculator</p>
+  <div class="header-links">
+    <!-- REPLACE THE HREF VALUES BELOW WITH YOUR ACTUAL LINKS -->
+    <a class="header-link roblox" href="https://www.roblox.com/games/119364915719874" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4.679 0L0 19.032l14.32 4.968L19 4.967 4.679 0zm9.461 13.237l-4.567-1.585 1.585-4.567 4.567 1.585-1.585 4.567z"/></svg>
+      Play on Roblox
+    </a>
+    <a class="header-link discord" href="https://discord.gg/RUP2tNrczk" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.031.053a19.9 19.9 0 0 0 5.993 3.031.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+      Join Discord
+    </a>
+  </div>
 </div>
 
 <nav class="nav">
@@ -357,7 +364,6 @@ function parseCSV(text){
   }).filter(i=>i.name);
 }
 
-// / shortcut
 document.addEventListener("keydown",e=>{
   if(e.key==="/" && document.activeElement.tagName!=="INPUT"){
     e.preventDefault();
@@ -366,7 +372,6 @@ document.addEventListener("keydown",e=>{
   }
 });
 
-// VALUES
 function populateCats(){
   const cats=[...new Set(allItems.map(i=>i.category).filter(Boolean))].sort();
   const sel=document.getElementById("v-cat");
@@ -406,7 +411,6 @@ function renderValues(){
   }).join("");
 }
 
-// TRADE
 function onSearch(side){
   const q=document.getElementById(`search-${side}`).value.toLowerCase();
   const drop=document.getElementById(`drop-${side}`);
@@ -427,7 +431,7 @@ function openDrop(side){
 }
 
 function addItem(side,idx){
-  const item={...allItems[idx], qty:1};
+  const item={...allItems[idx],qty:1};
   if(side==='you') yourItems.push(item);
   else theirItems.push(item);
   document.getElementById(`search-${side}`).value="";
@@ -454,12 +458,10 @@ function updateQty(side,idx,val){
   const qty=Math.max(1,parseInt(val)||1);
   if(side==='you') yourItems[idx].qty=qty;
   else theirItems[idx].qty=qty;
-  // update total display inline
   const totalSpan=document.getElementById(`qty-total-${side}-${idx}`);
   const items=side==='you'?yourItems:theirItems;
   if(totalSpan) totalSpan.textContent=(items[idx].value*qty).toLocaleString();
   updateResult();
-  // update side total
   const sideTotal=items.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
   document.getElementById(side==='you'?'your-total':'their-total').textContent=sideTotal.toLocaleString();
 }
@@ -523,11 +525,9 @@ function updateResult(){
   }
 }
 
-// SCREENSHOT
 function openScreenshot(){
   const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
   const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
-
   function renderSS(items,elId){
     const el=document.getElementById(elId);
     if(!items.length){el.innerHTML=`<div style="color:var(--text-dim);font-size:12px">No items</div>`;return;}
@@ -538,12 +538,10 @@ function openScreenshot(){
         <span class="ss-item-val">${(i.value*(i.qty||1)).toLocaleString()}</span>
       </div>`).join("");
   }
-
   renderSS(yourItems,"ss-your");
   renderSS(theirItems,"ss-their");
   document.getElementById("ss-your-total").textContent=you.toLocaleString();
   document.getElementById("ss-their-total").textContent=them.toLocaleString();
-
   const diff=you-them;
   const pct=them>0?Math.round((Math.abs(diff)/them)*100):100;
   const sv=document.getElementById("ss-verdict");
@@ -551,7 +549,6 @@ function openScreenshot(){
   else if(Math.abs(diff)<Math.max(you,them)*0.05){sv.textContent="Fair trade ✓";sv.className="ss-verdict even";}
   else if(diff>0){sv.textContent=`You overpay by ${Math.abs(diff).toLocaleString()} (${pct}%)`;sv.className="ss-verdict lose";}
   else{sv.textContent=`You win by ${Math.abs(diff).toLocaleString()} (${pct}%)`;sv.className="ss-verdict win";}
-
   document.getElementById("ss-overlay").classList.add("open");
 }
 
@@ -568,10 +565,8 @@ function copyScreenshot(){
   else if(Math.abs(diff)<Math.max(you,them)*0.05) verdict="Fair trade ✓";
   else if(diff>0) verdict=`You overpay by ${Math.abs(diff).toLocaleString()} (${pct}%)`;
   else verdict=`You win by ${Math.abs(diff).toLocaleString()} (${pct}%)`;
-
   const yourLines=yourItems.map(i=>`  ${i.qty>1?i.qty+"x ":""}${i.name} — ${(i.value*(i.qty||1)).toLocaleString()}`).join("\n")||"  (none)";
   const theirLines=theirItems.map(i=>`  ${i.qty>1?i.qty+"x ":""}${i.name} — ${(i.value*(i.qty||1)).toLocaleString()}`).join("\n")||"  (none)";
-
   const text=`⚖️ Overworld Trade\n\n📦 Your Offer (${you.toLocaleString()}):\n${yourLines}\n\n📦 Their Offer (${them.toLocaleString()}):\n${theirLines}\n\n${verdict}\n\n— Overworld Values`;
   navigator.clipboard.writeText(text).then(()=>{
     const btn=document.querySelector(".ss-btn.primary");
