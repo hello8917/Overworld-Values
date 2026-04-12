@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> <!-- Add this just before the closing </head> tag -->
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Overworld Values</title>
@@ -360,14 +360,11 @@ tr:hover td { background: var(--bg3); }
 
 <div class="footer">Data pulled live from Google Sheets &bull; Overworld Values<br><span style="font-size:0.85em;opacity:0.75;">Developer: Zackscott919 &bull; Data Collector: Ultraball278</span></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQNK7YRxISteAHufA7Be7Tpr56o2Yji0SpupmN01wwRDZs2UGlofcIwrEtGX-gHYzsfI9BePZCM-VdU/pub?gid=0&single=true&output=csv";
 const SB_URL="https://xmyzcahkfgnebxnjkjhg.supabase.co";
 const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhteXpjYWhrZmduZWJ4bmpramhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTQxNDAsImV4cCI6MjA5MTU5MDE0MH0.1ZX3nUjmnyq50MqU835hIz7bKhm2EOVbbFpGvx4mz-8";
 const demandOrder={High:3,Medium:2,Low:1};
-const supabase = Supabase.createClient(SB_URL, SB_KEY);
 let allItems=[],yourItems=[],theirItems=[],allTrades=[];
 let sortCol="value",sortDir="desc",selectedCats=new Set();
 
@@ -540,97 +537,31 @@ function openPostTrade(){
 }
 function closePT(){document.getElementById("pt-overlay").classList.remove("open");}
 
-async function submitTrade() {
-  const username = document.getElementById("pt-username").value.trim();
-  if (!username) {
-    alert("Please enter your Roblox username!");
-    return;
-  }
-
-  let user = (await supabase.auth.getUser()).data.user;
-
-  // Auto sign in anonymously if not signed in
-  if (!user) {
-    const { data, error } = await supabase.auth.signInAnonymously();
-    if (error) {
-      alert("Failed to sign in anonymously: " + error.message);
-      return;
-    }
-    user = data.user;
-  }
-
-  const desc = document.getElementById("pt-desc").value.trim();
-  const you = yourItems.reduce((s, i) => s + (i.value * (i.qty || 1)), 0);
-  const them = theirItems.reduce((s, i) => s + (i.value * (i.qty || 1)), 0);
-
-  const offering = yourItems.map(i => ({ 
-    name: i.name, 
-    value: i.value, 
-    qty: i.qty || 1, 
-    image: i.image || "" 
-  }));
-  const wanting = theirItems.map(i => ({ 
-    name: i.name, 
-    value: i.value, 
-    qty: i.qty || 1, 
-    image: i.image || "" 
-  }));
-
-  const { error } = await supabase
-    .from('trades')
-    .insert({
-      username,
-      offering,
-      wanting,
-      offering_total: you,
-      wanting_total: them,
-      description: desc || null,
-      user_id: user.id
+async function submitTrade(){
+  const username=document.getElementById("pt-username").value.trim();
+  if(!username){alert("Please enter your Roblox username!");return;}
+  const desc=document.getElementById("pt-desc").value.trim();
+  const btn=document.getElementById("pt-submit");
+  btn.disabled=true;btn.textContent="Posting...";
+  const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const offering=yourItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
+  const wanting=theirItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
+  try{
+    const res=await fetch(`${SB_URL}/rest/v1/trades`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`,"Prefer":"return=minimal"},
+      body:JSON.stringify({username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null})
     });
-
-  if (error) {
-    console.error(error);
-    alert("Failed to post trade: " + error.message);
-    return;
-  }
-
-  closePT();
-  document.getElementById("pt-username").value = "";
-  document.getElementById("pt-desc").value = "";
-  showPage("board");
-  loadBoard();
+    if(!res.ok)throw new Error();
+    closePT();
+    document.getElementById("pt-username").value="";
+    document.getElementById("pt-desc").value="";
+    showPage("board");loadBoard();
+  }catch(e){alert("Failed to post. Please try again.");}
+  btn.disabled=false;btn.textContent="Post Trade";
 }
 
-  const desc = document.getElementById("pt-desc").value.trim();
-  const you = yourItems.reduce((s, i) => s + (i.value * (i.qty || 1)), 0);
-  const them = theirItems.reduce((s, i) => s + (i.value * (i.qty || 1)), 0);
-
-  const offering = yourItems.map(i => ({ name: i.name, value: i.value, qty: i.qty || 1, image: i.image || "" }));
-  const wanting = theirItems.map(i => ({ name: i.name, value: i.value, qty: i.qty || 1, image: i.image || "" }));
-
-  const { error } = await supabase
-    .from('trades')
-    .insert({
-      username,
-      offering,
-      wanting,
-      offering_total: you,
-      wanting_total: them,
-      description: desc || null,
-      user_id: user?.id || (await supabase.auth.getUser()).data.user?.id   // fallback
-    });
-
-  if (error) {
-    alert("Failed to post trade: " + error.message);
-    return;
-  }
-
-  closePT();
-  document.getElementById("pt-username").value = "";
-  document.getElementById("pt-desc").value = "";
-  showPage("board");
-  loadBoard();
-}
 async function loadBoard(){
   document.getElementById("tb-list").innerHTML=`<div class="tb-empty"><div class="tb-empty-icon">⏳</div>Loading trades...</div>`;
   try{
@@ -686,33 +617,13 @@ function filterBoard(){
     </div>`).join("");
 }
 
-async function deleteTrade(id, btn) {
-  if (!confirm("Delete this trade listing?")) return;
-
-  btn.disabled = true;
-
-  // Optional: check ownership on client first (for better UX)
-  const trade = allTrades.find(t => t.id === id);
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user || trade.user_id !== user.id) {
-    alert("You can only delete your own trades.");
-    btn.disabled = false;
-    return;
-  }
-
-  const { error } = await supabase
-    .from('trades')
-    .delete()
-    .eq('id', id);
-
-  if (error) {
-    alert("Could not delete: " + error.message);
-    btn.disabled = false;
-  } else {
-    allTrades = allTrades.filter(t => t.id !== id);
-    filterBoard();
-  }
+async function deleteTrade(id,btn){
+  if(!confirm("Delete this trade listing?"))return;
+  btn.disabled=true;
+  try{
+    await fetch(`${SB_URL}/rest/v1/trades?id=eq.${id}`,{method:"DELETE",headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`}});
+    allTrades=allTrades.filter(t=>t.id!==id);filterBoard();
+  }catch(e){alert("Could not delete. Try again.");btn.disabled=false;}
 }
 
 function timeAgo(ts){
