@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overworld Values</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #f0c040; --gold-dim: #c8a840; --gold-dark: #7a5c1a;
+  --gold-deeper: #5a4010; --bg: #1a1208; --bg2: #221608;
+  --bg3: #2a1e0a; --bg4: #3a2a0a; --text: #e8d8a0;
+  --text-dim: #a08850; --border: #7a5c1a;
+  --green: #80c040; --red: #e05030;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--text); font-family: 'Lato', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+
+.header {
+  background: linear-gradient(135deg, #2a1800 0%, #1a1208 40%, #2a1800 100%);
+  border-bottom: 2px solid var(--gold-dark);
+  padding: 22px 32px 18px; text-align: center; position: relative; overflow: hidden; flex-shrink: 0;
+}
+.header::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(120,90,20,0.05) 40px, rgba(120,90,20,0.05) 80px);
+  pointer-events: none;
+}
+.header h1 { font-family: 'Cinzel', serif; font-size: clamp(24px, 4vw, 44px); font-weight: 600; color: var(--gold); letter-spacing: 0.08em; text-shadow: 0 0 40px rgba(240,192,64,0.3); position: relative; }
+.header p { font-size: 12px; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.12em; text-transform: uppercase; position: relative; }
+
+.nav { background: var(--bg4); border-bottom: 1px solid var(--border); display: flex; flex-shrink: 0; }
+.nav-btn {
+  flex: 1; padding: 13px 20px; background: none; border: none;
+  color: var(--text-dim); font-family: 'Cinzel', serif; font-size: 13px;
+  letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+}
+.nav-btn:hover { color: var(--gold-dim); background: var(--bg3); }
+.nav-btn.active { color: var(--gold); border-bottom-color: var(--gold); background: var(--bg3); }
+.nav-btn .nav-icon { margin-right: 8px; font-size: 14px; }
+
+.page { display: none; flex: 1; flex-direction: column; }
+.page.active { display: flex; flex-direction: column; }
+
+/* VALUES */
+.controls {
+  background: var(--bg3); border-bottom: 1px solid var(--border);
+  padding: 12px 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; flex-shrink: 0;
+}
+.search-wrap { flex: 1; min-width: 200px; position: relative; }
+.search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); pointer-events: none; }
+.search-wrap input {
+  width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 9px 12px 9px 38px; color: var(--text); font-family: 'Lato', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s;
+}
+.search-wrap input:focus { border-color: var(--gold); }
+.search-wrap input::placeholder { color: var(--text-dim); }
+select {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 9px 14px; color: var(--text); font-family: 'Lato', sans-serif; font-size: 14px; outline: none; cursor: pointer;
+}
+select:focus { border-color: var(--gold); }
+.item-count { padding: 7px 20px; background: var(--bg2); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-dim); letter-spacing: 0.05em; flex-shrink: 0; }
+.item-count span { color: var(--gold); font-weight: 700; }
+.slash-hint { float: right; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 11px; color: var(--text-dim); font-family: monospace; }
+.table-wrap { overflow: auto; flex: 1; }
+table { width: 100%; border-collapse: collapse; min-width: 520px; }
+thead { background: var(--bg4); position: sticky; top: 0; z-index: 10; }
+th { padding: 12px 16px; text-align: left; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 600; color: var(--gold); border-bottom: 2px solid var(--border); white-space: nowrap; cursor: pointer; user-select: none; letter-spacing: 0.08em; transition: background 0.15s; }
+th:hover { background: #4a3a1a; }
+td { padding: 10px 16px; font-size: 14px; border-bottom: 1px solid #2a1e0a; vertical-align: middle; }
+tr:hover td { background: var(--bg3); }
+.item-img { width: 52px; height: 52px; border-radius: 7px; object-fit: cover; border: 1px solid var(--border); background: var(--bg3); display: block; }
+.img-ph { width: 52px; height: 52px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg3); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 20px; }
+.item-name { font-weight: 700; color: var(--text); font-size: 15px; }
+.val { font-family: 'Cinzel', serif; font-weight: 600; color: var(--gold); font-size: 15px; }
+.badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.badge.high   { background: #3a2800; color: #f0a020; border: 1px solid #7a5000; }
+.badge.medium { background: #1a2a00; color: #80c040; border: 1px solid #406000; }
+.badge.low    { background: #1a0a00; color: #c06040; border: 1px solid #603020; }
+.cat { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; background: var(--bg3); color: var(--gold-dim); border: 1px solid var(--gold-deeper); }
+.empty, .loading-msg, .err-msg { text-align: center; padding: 50px; color: var(--text-dim); font-size: 14px; }
+.err-msg { color: #c06040; }
+
+/* TRADE */
+.trade-main { display: grid; grid-template-columns: 1fr 1fr; flex: 1; overflow: hidden; }
+.side { padding: 16px; border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.side:last-child { border-right: none; }
+.side-header { display: flex; justify-content: space-between; align-items: center; }
+.side-title { font-family: 'Cinzel', serif; font-size: 15px; color: var(--gold); letter-spacing: 0.06em; }
+.side-total { font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold); }
+.add-area { position: relative; }
+.add-area input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; color: var(--text);
+  font-family: 'Lato', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s;
+}
+.add-area input:focus { border-color: var(--gold); }
+.add-area input::placeholder { color: var(--text-dim); }
+.dropdown {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 200;
+  background: var(--bg4); border: 1px solid var(--border); border-top: none;
+  border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto; display: none;
+}
+.dropdown.open { display: block; }
+.dropdown-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; cursor: pointer; transition: background 0.1s; font-size: 13px; }
+.dropdown-item:hover { background: var(--bg3); }
+.dropdown-item img { width: 30px; height: 30px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border); background: var(--bg3); }
+.di-ph { width: 30px; height: 30px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg3); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 13px; }
+.di-name { flex: 1; color: var(--text); }
+.di-val { color: var(--gold); font-size: 12px; font-family: 'Cinzel', serif; }
+.no-results { padding: 12px; color: var(--text-dim); font-size: 13px; text-align: center; }
+.items-list { display: flex; flex-direction: column; gap: 8px; }
+
+/* TRADE ITEM with quantity */
+.trade-item { display: flex; align-items: center; gap: 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 9px 11px; flex-wrap: wrap; }
+.trade-item img { width: 46px; height: 46px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); background: var(--bg2); flex-shrink: 0; }
+.ti-ph { width: 46px; height: 46px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg2); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 16px; flex-shrink: 0; }
+.ti-info { flex: 1; min-width: 0; }
+.ti-name { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ti-val { font-family: 'Cinzel', serif; color: var(--gold); font-size: 12px; margin-top: 2px; }
+.ti-qty-row { display: flex; align-items: center; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
+.ti-qty-label { font-size: 11px; color: var(--text-dim); }
+.ti-qty-input {
+  width: 70px; background: var(--bg2); border: 1px solid var(--border); border-radius: 5px;
+  padding: 3px 7px; color: var(--gold); font-family: 'Cinzel', serif; font-size: 12px; outline: none; text-align: center;
+}
+.ti-qty-input:focus { border-color: var(--gold); }
+.ti-qty-total { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold-dim); }
+.ti-copy-qty {
+  background: var(--bg4); border: 1px solid var(--border); border-radius: 5px;
+  color: var(--text-dim); font-size: 11px; padding: 3px 8px; cursor: pointer; transition: all 0.15s; font-family: 'Lato', sans-serif;
+}
+.ti-copy-qty:hover { border-color: var(--gold); color: var(--gold); }
+.ti-copy-qty.copied { border-color: var(--green); color: var(--green); }
+.ti-remove { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 17px; line-height: 1; padding: 4px; border-radius: 4px; transition: color 0.15s; flex-shrink: 0; align-self: flex-start; }
+.ti-remove:hover { color: var(--red); }
+
+.add-placeholder { border: 1px dashed var(--border); border-radius: 8px; padding: 14px; text-align: center; color: var(--text-dim); font-size: 13px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.add-placeholder:hover { border-color: var(--gold); background: var(--bg3); }
+.clear-btn { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-dim); font-family: 'Lato', sans-serif; font-size: 12px; padding: 4px 10px; cursor: pointer; transition: all 0.15s; }
+.clear-btn:hover { border-color: var(--red); color: var(--red); }
+
+/* RESULT BAR */
+.result-bar { background: var(--bg4); border-top: 2px solid var(--border); padding: 14px 24px; flex-shrink: 0; }
+.bar-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; color: var(--text-dim); }
+.bar-row strong { color: var(--gold); font-family: 'Cinzel', serif; font-size: 15px; }
+.progress-track { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; background: linear-gradient(90deg, var(--gold-dark), var(--gold)); }
+.verdict { text-align: center; font-size: 14px; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 10px; }
+.verdict.win { color: var(--green); }
+.verdict.lose { color: var(--red); }
+.verdict.even { color: var(--gold); }
+.screenshot-btn {
+  display: block; width: 100%; padding: 9px; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--gold-dim); font-family: 'Cinzel', serif; font-size: 12px;
+  letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; text-align: center;
+}
+.screenshot-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--bg4); }
+
+/* SCREENSHOT OVERLAY */
+.ss-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+  z-index: 1000; align-items: center; justify-content: center; flex-direction: column; gap: 14px;
+}
+.ss-overlay.open { display: flex; }
+.ss-card {
+  background: #1a1208; border: 2px solid var(--gold-dark); border-radius: 12px;
+  padding: 24px; min-width: 340px; max-width: 90vw;
+}
+.ss-title { font-family: 'Cinzel', serif; color: var(--gold); font-size: 18px; text-align: center; margin-bottom: 16px; letter-spacing: 0.08em; }
+.ss-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.ss-side-title { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold-dim); letter-spacing: 0.06em; margin-bottom: 8px; }
+.ss-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px; }
+.ss-item img { width: 32px; height: 32px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border); }
+.ss-item-ph { width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg3); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-dim); }
+.ss-item-name { flex: 1; color: var(--text); }
+.ss-item-val { color: var(--gold); font-family: 'Cinzel', serif; font-size: 12px; }
+.ss-divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+.ss-totals { display: flex; justify-content: space-between; font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold); margin-bottom: 10px; }
+.ss-verdict { text-align: center; font-size: 13px; font-weight: 700; padding: 8px; border-radius: 6px; }
+.ss-verdict.win { background: #1a2a00; color: var(--green); }
+.ss-verdict.lose { background: #2a0a00; color: var(--red); }
+.ss-verdict.even { background: var(--bg3); color: var(--gold); }
+.ss-watermark { text-align: center; font-size: 10px; color: var(--text-dim); margin-top: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+.ss-actions { display: flex; gap: 10px; }
+.ss-btn {
+  flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--bg3); color: var(--gold-dim); font-family: 'Cinzel', serif;
+  font-size: 12px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; text-align: center;
+}
+.ss-btn:hover { border-color: var(--gold); color: var(--gold); }
+.ss-btn.primary { background: var(--gold-dark); border-color: var(--gold); color: var(--gold); }
+.ss-btn.primary:hover { background: #8a6c2a; }
+
+.footer { text-align: center; padding: 12px; font-size: 11px; color: var(--text-dim); border-top: 1px solid var(--border); background: var(--bg3); letter-spacing: 0.08em; text-transform: uppercase; flex-shrink: 0; }
+
+@media (max-width: 600px) {
+  .trade-main { grid-template-columns: 1fr; overflow: visible; }
+  .side { border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; }
+  .ss-sides { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Overworld Values</h1>
+  <p>Live item tracker &amp; trade calculator</p>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="showPage('values')" id="nav-values">
+    <span class="nav-icon">📋</span>Value List
+  </button>
+  <button class="nav-btn" onclick="showPage('trade')" id="nav-trade">
+    <span class="nav-icon">⚖️</span>Trade Calculator
+  </button>
+</nav>
+
+<!-- VALUES PAGE -->
+<div class="page active" id="page-values">
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="v-search" placeholder="Search items... (press / to focus)" oninput="renderValues()">
+    </div>
+    <select id="v-cat" onchange="renderValues()"><option value="">All Categories</option></select>
+    <select id="v-demand" onchange="renderValues()">
+      <option value="">All Demand</option>
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+    <select id="v-sort" onchange="renderValues()">
+      <option value="value-desc">Value: High → Low</option>
+      <option value="value-asc">Value: Low → High</option>
+      <option value="name-asc">Name: A → Z</option>
+      <option value="demand-desc">Demand: High first</option>
+    </select>
+  </div>
+  <div class="item-count">Showing <span id="v-count">—</span> items <span class="slash-hint">/ to search</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:68px;cursor:default">Image</th>
+          <th>Item</th>
+          <th>Category</th>
+          <th>Value</th>
+          <th>Demand</th>
+        </tr>
+      </thead>
+      <tbody id="v-tbody"><tr><td colspan="5" class="loading-msg">Loading items...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TRADE PAGE -->
+<div class="page" id="page-trade">
+  <div class="trade-main">
+    <div class="side">
+      <div class="side-header">
+        <span class="side-title">Your Offer</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="side-total" id="your-total">0</span>
+          <button class="clear-btn" onclick="clearSide('you')">Clear</button>
+        </div>
+      </div>
+      <div class="add-area">
+        <input type="text" id="search-you" placeholder="Add item to your offer..." oninput="onSearch('you')" onfocus="openDrop('you')" autocomplete="off">
+        <div class="dropdown" id="drop-you"></div>
+      </div>
+      <div class="items-list" id="items-you"></div>
+    </div>
+    <div class="side">
+      <div class="side-header">
+        <span class="side-title">Their Offer</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="side-total" id="their-total">0</span>
+          <button class="clear-btn" onclick="clearSide('them')">Clear</button>
+        </div>
+      </div>
+      <div class="add-area">
+        <input type="text" id="search-them" placeholder="Add item to their offer..." oninput="onSearch('them')" onfocus="openDrop('them')" autocomplete="off">
+        <div class="dropdown" id="drop-them"></div>
+      </div>
+      <div class="items-list" id="items-them"></div>
+    </div>
+  </div>
+  <div class="result-bar">
+    <div class="bar-row">
+      <span>You: <strong id="bar-you">0</strong></span>
+      <span>Them: <strong id="bar-them">0</strong></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:50%"></div></div>
+    <div class="verdict even" id="verdict">Add items to compare</div>
+    <button class="screenshot-btn" onclick="openScreenshot()">📸 Generate Trade Screenshot</button>
+  </div>
+</div>
+
+<!-- SCREENSHOT OVERLAY -->
+<div class="ss-overlay" id="ss-overlay" onclick="closeScreenshotOutside(event)">
+  <div class="ss-card" id="ss-card">
+    <div class="ss-title">Overworld Trade</div>
+    <div class="ss-sides">
+      <div>
+        <div class="ss-side-title">YOUR OFFER</div>
+        <div id="ss-your"></div>
+        <hr class="ss-divider">
+        <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold)" id="ss-your-total"></div>
+      </div>
+      <div>
+        <div class="ss-side-title">THEIR OFFER</div>
+        <div id="ss-their"></div>
+        <hr class="ss-divider">
+        <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold)" id="ss-their-total"></div>
+      </div>
+    </div>
+    <div class="ss-verdict even" id="ss-verdict"></div>
+    <div class="ss-watermark">overworld values</div>
+  </div>
+  <div class="ss-actions">
+    <button class="ss-btn primary" onclick="copyScreenshot()">📋 Copy as Text</button>
+    <button class="ss-btn" onclick="closeScreenshot()">Close</button>
+  </div>
+</div>
+
+<div class="footer">Data pulled live from Google Sheets &bull; Overworld Values<br><span style="font-size:0.85em;opacity:0.75;">Developer: Zackscott919 &bull; Data Collector: Ultraball278</span></div>
+
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNK7YRxISteAHufA7Be7Tpr56o2Yji0SpupmN01wwRDZs2UGlofcIwrEtGX-gHYzsfI9BePZCM-VdU/pub?gid=0&single=true&output=csv";
+const demandOrder = {High:3,Medium:2,Low:1};
+let allItems=[], yourItems=[], theirItems=[];
+
+function showPage(p){
+  document.querySelectorAll(".page").forEach(el=>el.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(el=>el.classList.remove("active"));
+  document.getElementById("page-"+p).classList.add("active");
+  document.getElementById("nav-"+p).classList.add("active");
+}
+
+function parseCSV(text){
+  return text.trim().split("\n").slice(1).map(row=>{
+    const cols=[]; let cur="",inQ=false;
+    for(let i=0;i<row.length;i++){
+      const ch=row[i];
+      if(ch==='"'){inQ=!inQ;}
+      else if(ch===','&&!inQ){cols.push(cur.trim());cur="";}
+      else{cur+=ch;}
+    }
+    cols.push(cur.trim());
+    return {name:cols[0]||"",value:parseInt((cols[1]||"0").replace(/[^0-9]/g,""))||0,demand:cols[2]||"",image:cols[3]||"",category:cols[4]||""};
+  }).filter(i=>i.name);
+}
+
+// / shortcut
+document.addEventListener("keydown",e=>{
+  if(e.key==="/" && document.activeElement.tagName!=="INPUT"){
+    e.preventDefault();
+    showPage("values");
+    document.getElementById("v-search").focus();
+  }
+});
+
+// VALUES
+function populateCats(){
+  const cats=[...new Set(allItems.map(i=>i.category).filter(Boolean))].sort();
+  const sel=document.getElementById("v-cat");
+  cats.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;sel.appendChild(o);});
+}
+
+function renderValues(){
+  const q=document.getElementById("v-search").value.toLowerCase();
+  const cat=document.getElementById("v-cat").value;
+  const dem=document.getElementById("v-demand").value;
+  const sort=document.getElementById("v-sort").value;
+  let list=allItems.filter(i=>{
+    if(q&&!i.name.toLowerCase().includes(q))return false;
+    if(cat&&i.category!==cat)return false;
+    if(dem&&i.demand!==dem)return false;
+    return true;
+  });
+  list.sort((a,b)=>{
+    if(sort==="value-desc")return b.value-a.value;
+    if(sort==="value-asc")return a.value-b.value;
+    if(sort==="name-asc")return a.name.localeCompare(b.name);
+    if(sort==="demand-desc")return(demandOrder[b.demand]||0)-(demandOrder[a.demand]||0);
+    return 0;
+  });
+  document.getElementById("v-count").textContent=list.length;
+  const tb=document.getElementById("v-tbody");
+  if(!list.length){tb.innerHTML=`<tr><td colspan="5" class="empty">No items match your filters.</td></tr>`;return;}
+  tb.innerHTML=list.map(i=>{
+    const d=(i.demand||"").toLowerCase();
+    return `<tr>
+      <td>${i.image?`<img class="item-img" src="${i.image}" alt="${i.name}" loading="lazy" onerror="this.outerHTML='<div class=\\'img-ph\\'>?</div>'">`:`<div class="img-ph">?</div>`}</td>
+      <td><span class="item-name">${i.name}</span></td>
+      <td>${i.category?`<span class="cat">${i.category}</span>`:""}</td>
+      <td><span class="val">${i.value.toLocaleString()}</span></td>
+      <td>${i.demand?`<span class="badge ${d}">${i.demand}</span>`:""}</td>
+    </tr>`;
+  }).join("");
+}
+
+// TRADE
+function onSearch(side){
+  const q=document.getElementById(`search-${side}`).value.toLowerCase();
+  const drop=document.getElementById(`drop-${side}`);
+  if(!q){drop.classList.remove("open");drop.innerHTML="";return;}
+  const results=allItems.filter(i=>i.name.toLowerCase().includes(q)).slice(0,10);
+  if(!results.length){drop.innerHTML=`<div class="no-results">No items found</div>`;drop.classList.add("open");return;}
+  drop.innerHTML=results.map(i=>`
+    <div class="dropdown-item" onclick="addItem('${side}',${allItems.indexOf(i)})">
+      ${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\\'di-ph\\'>?</div>'">`:`<div class="di-ph">?</div>`}
+      <span class="di-name">${i.name}</span>
+      <span class="di-val">${i.value.toLocaleString()}</span>
+    </div>`).join("");
+  drop.classList.add("open");
+}
+
+function openDrop(side){
+  if(document.getElementById(`search-${side}`).value) onSearch(side);
+}
+
+function addItem(side,idx){
+  const item={...allItems[idx], qty:1};
+  if(side==='you') yourItems.push(item);
+  else theirItems.push(item);
+  document.getElementById(`search-${side}`).value="";
+  document.getElementById(`drop-${side}`).classList.remove("open");
+  renderSide(side);
+  updateResult();
+}
+
+function removeItem(side,idx){
+  if(side==='you') yourItems.splice(idx,1);
+  else theirItems.splice(idx,1);
+  renderSide(side);
+  updateResult();
+}
+
+function clearSide(side){
+  if(side==='you') yourItems=[];
+  else theirItems=[];
+  renderSide(side);
+  updateResult();
+}
+
+function updateQty(side,idx,val){
+  const qty=Math.max(1,parseInt(val)||1);
+  if(side==='you') yourItems[idx].qty=qty;
+  else theirItems[idx].qty=qty;
+  // update total display inline
+  const totalSpan=document.getElementById(`qty-total-${side}-${idx}`);
+  const items=side==='you'?yourItems:theirItems;
+  if(totalSpan) totalSpan.textContent=(items[idx].value*qty).toLocaleString();
+  updateResult();
+  // update side total
+  const sideTotal=items.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  document.getElementById(side==='you'?'your-total':'their-total').textContent=sideTotal.toLocaleString();
+}
+
+function copyQtyValue(side,idx,btnEl){
+  const items=side==='you'?yourItems:theirItems;
+  const item=items[idx];
+  const total=(item.value*(item.qty||1)).toLocaleString();
+  navigator.clipboard.writeText(total).then(()=>{
+    btnEl.textContent="Copied!";
+    btnEl.classList.add("copied");
+    setTimeout(()=>{btnEl.textContent="Copy";btnEl.classList.remove("copied");},1500);
+  });
+}
+
+function renderSide(side){
+  const items=side==='you'?yourItems:theirItems;
+  const total=items.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  document.getElementById(side==='you'?'your-total':'their-total').textContent=total.toLocaleString();
+  const list=document.getElementById(`items-${side}`);
+  if(!items.length){
+    list.innerHTML=`<div class="add-placeholder" onclick="document.getElementById('search-${side}').focus()">+ Add an item to this offer</div>`;
+    return;
+  }
+  list.innerHTML=items.map((i,idx)=>`
+    <div class="trade-item">
+      ${i.image?`<img src="${i.image}" alt="${i.name}" style="width:46px;height:46px;border-radius:6px;object-fit:cover;border:1px solid var(--border);background:var(--bg2);flex-shrink:0" onerror="this.outerHTML='<div class=\\'ti-ph\\'>?</div>'">`:`<div class="ti-ph">?</div>`}
+      <div class="ti-info">
+        <div class="ti-name">${i.name}</div>
+        <div class="ti-val">${i.value.toLocaleString()} each</div>
+        <div class="ti-qty-row">
+          <span class="ti-qty-label">Qty:</span>
+          <input class="ti-qty-input" type="number" min="1" value="${i.qty||1}" oninput="updateQty('${side}',${idx},this.value)">
+          <span class="ti-qty-label">= </span>
+          <span class="ti-qty-total" id="qty-total-${side}-${idx}">${(i.value*(i.qty||1)).toLocaleString()}</span>
+          <button class="ti-copy-qty" onclick="copyQtyValue('${side}',${idx},this)">Copy</button>
+        </div>
+      </div>
+      <button class="ti-remove" onclick="removeItem('${side}',${idx})">&#x2715;</button>
+    </div>`).join("");
+}
+
+function updateResult(){
+  const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  document.getElementById("bar-you").textContent=you.toLocaleString();
+  document.getElementById("bar-them").textContent=them.toLocaleString();
+  const fill=document.getElementById("progress-fill");
+  const verdict=document.getElementById("verdict");
+  const total=you+them;
+  if(!total){fill.style.width="50%";verdict.textContent="Add items to compare";verdict.className="verdict even";return;}
+  fill.style.width=Math.round((you/total)*100)+"%";
+  const diff=you-them;
+  const pct=them>0?Math.round((Math.abs(diff)/them)*100):100;
+  if(Math.abs(diff)<Math.max(you,them)*0.05){
+    verdict.textContent="Fair trade ✓";verdict.className="verdict even";
+  } else if(diff>0){
+    verdict.textContent=`You're overpaying by ${Math.abs(diff).toLocaleString()} (${pct}%)`;verdict.className="verdict lose";
+  } else {
+    verdict.textContent=`You're winning by ${Math.abs(diff).toLocaleString()} (${pct}%)`;verdict.className="verdict win";
+  }
+}
+
+// SCREENSHOT
+function openScreenshot(){
+  const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+
+  function renderSS(items,elId){
+    const el=document.getElementById(elId);
+    if(!items.length){el.innerHTML=`<div style="color:var(--text-dim);font-size:12px">No items</div>`;return;}
+    el.innerHTML=items.map(i=>`
+      <div class="ss-item">
+        ${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\\'ss-item-ph\\'>?</div>'">`:`<div class="ss-item-ph">?</div>`}
+        <span class="ss-item-name">${i.qty>1?`${i.qty}x `:""}${i.name}</span>
+        <span class="ss-item-val">${(i.value*(i.qty||1)).toLocaleString()}</span>
+      </div>`).join("");
+  }
+
+  renderSS(yourItems,"ss-your");
+  renderSS(theirItems,"ss-their");
+  document.getElementById("ss-your-total").textContent=you.toLocaleString();
+  document.getElementById("ss-their-total").textContent=them.toLocaleString();
+
+  const diff=you-them;
+  const pct=them>0?Math.round((Math.abs(diff)/them)*100):100;
+  const sv=document.getElementById("ss-verdict");
+  if(!you&&!them){sv.textContent="No items added";sv.className="ss-verdict even";}
+  else if(Math.abs(diff)<Math.max(you,them)*0.05){sv.textContent="Fair trade ✓";sv.className="ss-verdict even";}
+  else if(diff>0){sv.textContent=`You overpay by ${Math.abs(diff).toLocaleString()} (${pct}%)`;sv.className="ss-verdict lose";}
+  else{sv.textContent=`You win by ${Math.abs(diff).toLocaleString()} (${pct}%)`;sv.className="ss-verdict win";}
+
+  document.getElementById("ss-overlay").classList.add("open");
+}
+
+function closeScreenshot(){ document.getElementById("ss-overlay").classList.remove("open"); }
+function closeScreenshotOutside(e){ if(e.target===document.getElementById("ss-overlay")) closeScreenshot(); }
+
+function copyScreenshot(){
+  const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const diff=you-them;
+  const pct=them>0?Math.round((Math.abs(diff)/them)*100):100;
+  let verdict="";
+  if(!you&&!them) verdict="No items";
+  else if(Math.abs(diff)<Math.max(you,them)*0.05) verdict="Fair trade ✓";
+  else if(diff>0) verdict=`You overpay by ${Math.abs(diff).toLocaleString()} (${pct}%)`;
+  else verdict=`You win by ${Math.abs(diff).toLocaleString()} (${pct}%)`;
+
+  const yourLines=yourItems.map(i=>`  ${i.qty>1?i.qty+"x ":""}${i.name} — ${(i.value*(i.qty||1)).toLocaleString()}`).join("\n")||"  (none)";
+  const theirLines=theirItems.map(i=>`  ${i.qty>1?i.qty+"x ":""}${i.name} — ${(i.value*(i.qty||1)).toLocaleString()}`).join("\n")||"  (none)";
+
+  const text=`⚖️ Overworld Trade\n\n📦 Your Offer (${you.toLocaleString()}):\n${yourLines}\n\n📦 Their Offer (${them.toLocaleString()}):\n${theirLines}\n\n${verdict}\n\n— Overworld Values`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.querySelector(".ss-btn.primary");
+    btn.textContent="✓ Copied!";
+    setTimeout(()=>btn.textContent="📋 Copy as Text",2000);
+  });
+}
+
+document.addEventListener("click",e=>{
+  if(!e.target.closest(".add-area")) document.querySelectorAll(".dropdown").forEach(d=>d.classList.remove("open"));
+});
+
+fetch(CSV_URL).then(r=>r.text()).then(text=>{
+  allItems=parseCSV(text);
+  populateCats();
+  renderValues();
+  renderSide("you");
+  renderSide("them");
+}).catch(()=>{
+  document.getElementById("v-tbody").innerHTML=`<tr><td colspan="5" class="err-msg">⚠️ Could not load data. Make sure your sheet is published to the web.</td></tr>`;
+});
+</script>
+</body>
+</html>
