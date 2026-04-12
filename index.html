@@ -537,31 +537,54 @@ function openPostTrade(){
 }
 function closePT(){document.getElementById("pt-overlay").classList.remove("open");}
 
-async function submitTrade(){
-  const username=document.getElementById("pt-username").value.trim();
-  if(!username){alert("Please enter your Roblox username!");return;}
-  const desc=document.getElementById("pt-desc").value.trim();
-  const btn=document.getElementById("pt-submit");
-  btn.disabled=true;btn.textContent="Posting...";
-  const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
-  const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
-  const offering=yourItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
-  const wanting=theirItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
-  try{
-    const res=await fetch(`${SB_URL}/rest/v1/trades`,{
-      method:"POST",
-      headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`,"Prefer":"return=minimal"},
-      body:JSON.stringify({username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null})
-    });
-    if(!res.ok)throw new Error();
-    closePT();
-    document.getElementById("pt-username").value="";
-    document.getElementById("pt-desc").value="";
-    showPage("board");loadBoard();
-  }catch(e){alert("Failed to post. Please try again.");}
-  btn.disabled=false;btn.textContent="Post Trade";
-}
+async function submitTrade() {
+  const username = document.getElementById("pt-username").value.trim();
+  if (!username) {
+    alert("Please enter your Roblox username!");
+    return;
+  }
 
+  // Get current user from Supabase Auth
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    // Option A: Auto sign in anonymously
+    const { data, error } = await supabase.auth.signInAnonymously();
+    if (error) {
+      alert("Failed to sign in. Please try again.");
+      return;
+    }
+  }
+
+  const desc = document.getElementById("pt-desc").value.trim();
+  const you = yourItems.reduce((s, i) => s + (i.value * (i.qty || 1)), 0);
+  const them = theirItems.reduce((s, i) => s + (i.value * (i.qty || 1)), 0);
+
+  const offering = yourItems.map(i => ({ name: i.name, value: i.value, qty: i.qty || 1, image: i.image || "" }));
+  const wanting = theirItems.map(i => ({ name: i.name, value: i.value, qty: i.qty || 1, image: i.image || "" }));
+
+  const { error } = await supabase
+    .from('trades')
+    .insert({
+      username,
+      offering,
+      wanting,
+      offering_total: you,
+      wanting_total: them,
+      description: desc || null,
+      user_id: user?.id || (await supabase.auth.getUser()).data.user?.id   // fallback
+    });
+
+  if (error) {
+    alert("Failed to post trade: " + error.message);
+    return;
+  }
+
+  closePT();
+  document.getElementById("pt-username").value = "";
+  document.getElementById("pt-desc").value = "";
+  showPage("board");
+  loadBoard();
+}
 async function loadBoard(){
   document.getElementById("tb-list").innerHTML=`<div class="tb-empty"><div class="tb-empty-icon">⏳</div>Loading trades...</div>`;
   try{
@@ -617,13 +640,33 @@ function filterBoard(){
     </div>`).join("");
 }
 
-async function deleteTrade(id,btn){
-  if(!confirm("Delete this trade listing?"))return;
-  btn.disabled=true;
-  try{
-    await fetch(`${SB_URL}/rest/v1/trades?id=eq.${id}`,{method:"DELETE",headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`}});
-    allTrades=allTrades.filter(t=>t.id!==id);filterBoard();
-  }catch(e){alert("Could not delete. Try again.");btn.disabled=false;}
+async function deleteTrade(id, btn) {
+  if (!confirm("Delete this trade listing?")) return;
+
+  btn.disabled = true;
+
+  // Optional: check ownership on client first (for better UX)
+  const trade = allTrades.find(t => t.id === id);
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user || trade.user_id !== user.id) {
+    alert("You can only delete your own trades.");
+    btn.disabled = false;
+    return;
+  }
+
+  const { error } = await supabase
+    .from('trades')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    alert("Could not delete: " + error.message);
+    btn.disabled = false;
+  } else {
+    allTrades = allTrades.filter(t => t.id !== id);
+    filterBoard();
+  }
 }
 
 function timeAgo(ts){
