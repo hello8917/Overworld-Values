@@ -83,6 +83,15 @@ select {
 select:focus { border-color: var(--gold); }
 .item-count { padding: 7px 20px; background: var(--bg2); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-dim); letter-spacing: 0.05em; flex-shrink: 0; }
 .item-count span { color: var(--gold); font-weight: 700; }
+
+.cat-bar { display:flex; flex-wrap:wrap; gap:7px; padding:10px 20px; background:var(--bg2); border-bottom:1px solid var(--border); flex-shrink:0; }
+.cat-pill { padding:5px 14px; border-radius:20px; font-size:12px; font-weight:700; background:var(--bg3); color:var(--text-dim); border:1px solid var(--border); cursor:pointer; transition:all 0.15s; letter-spacing:0.04em; }
+.cat-pill:hover { border-color:var(--gold-dim); color:var(--gold-dim); }
+.cat-pill.active { background:var(--gold-deeper); color:var(--gold); border-color:var(--gold); }
+.cat-pill.all-pill.active { background:var(--gold-deeper); color:var(--gold); border-color:var(--gold); }
+.th-arr { font-size:11px; margin-left:4px; opacity:0.5; }
+th.sorted .th-arr { opacity:1; color:var(--gold); }
+
 .slash-hint { float: right; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 11px; color: var(--text-dim); font-family: monospace; }
 .table-wrap { overflow: auto; flex: 1; }
 table { width: 100%; border-collapse: collapse; min-width: 520px; }
@@ -235,30 +244,25 @@ tr:hover td { background: var(--bg3); }
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="v-search" placeholder="Search items... (press / to focus)" oninput="renderValues()">
     </div>
-    <select id="v-cat" onchange="renderValues()"><option value="">All Categories</option></select>
     <select id="v-demand" onchange="renderValues()">
       <option value="">All Demand</option>
       <option value="High">High</option>
       <option value="Medium">Medium</option>
       <option value="Low">Low</option>
     </select>
-    <select id="v-sort" onchange="renderValues()">
-      <option value="value-desc">Value: High → Low</option>
-      <option value="value-asc">Value: Low → High</option>
-      <option value="name-asc">Name: A → Z</option>
-      <option value="demand-desc">Demand: High first</option>
-    </select>
+    
   </div>
+  <div class="cat-bar" id="cat-bar"></div>
   <div class="item-count">Showing <span id="v-count">—</span> items <span class="slash-hint">/ to search</span></div>
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
           <th style="width:68px;cursor:default">Image</th>
-          <th>Item</th>
-          <th>Category</th>
-          <th>Value</th>
-          <th>Demand</th>
+          <th id="th-name" onclick="thSort('name')">Item <span class="th-arr" id="arr-name"></span></th>
+          <th id="th-cat" onclick="thSort('cat')">Category <span class="th-arr" id="arr-cat"></span></th>
+          <th id="th-value" onclick="thSort('value')" class="sorted">Value <span class="th-arr" id="arr-value">&#8595;</span></th>
+          <th id="th-demand" onclick="thSort('demand')">Demand <span class="th-arr" id="arr-demand"></span></th>
         </tr>
       </thead>
       <tbody id="v-tbody"><tr><td colspan="5" class="loading-msg">Loading items...</td></tr></tbody>
@@ -342,6 +346,29 @@ tr:hover td { background: var(--bg3); }
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNK7YRxISteAHufA7Be7Tpr56o2Yji0SpupmN01wwRDZs2UGlofcIwrEtGX-gHYzsfI9BePZCM-VdU/pub?gid=0&single=true&output=csv";
 const demandOrder = {High:3,Medium:2,Low:1};
 let allItems=[], yourItems=[], theirItems=[];
+let selectedCats=new Set(), sortCol="value", sortDir="desc";
+
+function thSort(col){
+  if(sortCol===col){ sortDir=sortDir==="asc"?"desc":"asc"; }
+  else { sortCol=col; sortDir=col==="value"||col==="demand"?"desc":"asc"; }
+  updateThHeaders();
+  renderValues();
+}
+
+function updateThHeaders(){
+  ["name","cat","value","demand"].forEach(c=>{
+    const th=document.getElementById("th-"+c);
+    const arr=document.getElementById("arr-"+c);
+    if(!th||!arr) return;
+    if(c===sortCol){
+      th.classList.add("sorted");
+      arr.textContent=sortDir==="asc"?"↑":"↓";
+    } else {
+      th.classList.remove("sorted");
+      arr.textContent="";
+    }
+  });
+}
 
 function showPage(p){
   document.querySelectorAll(".page").forEach(el=>el.classList.remove("active"));
@@ -374,26 +401,43 @@ document.addEventListener("keydown",e=>{
 
 function populateCats(){
   const cats=[...new Set(allItems.map(i=>i.category).filter(Boolean))].sort();
-  const sel=document.getElementById("v-cat");
-  cats.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;sel.appendChild(o);});
+  const bar=document.getElementById("cat-bar");
+  let html=`<span class="cat-pill all-pill active" onclick="toggleCat('__all__')">All</span>`;
+  cats.forEach(c=>{html+=`<span class="cat-pill" onclick="toggleCat('${c}')">${c}</span>`;});
+  bar.innerHTML=html;
+}
+
+function toggleCat(c){
+  if(c==="__all__"){
+    selectedCats.clear();
+  } else {
+    if(selectedCats.has(c)) selectedCats.delete(c);
+    else selectedCats.add(c);
+  }
+  // update pill active states
+  document.querySelectorAll(".cat-pill").forEach(p=>{
+    const isAll=p.classList.contains("all-pill");
+    if(isAll) p.classList.toggle("active", selectedCats.size===0);
+    else p.classList.toggle("active", selectedCats.has(p.textContent));
+  });
+  renderValues();
 }
 
 function renderValues(){
   const q=document.getElementById("v-search").value.toLowerCase();
-  const cat=document.getElementById("v-cat").value;
   const dem=document.getElementById("v-demand").value;
-  const sort=document.getElementById("v-sort").value;
   let list=allItems.filter(i=>{
     if(q&&!i.name.toLowerCase().includes(q))return false;
-    if(cat&&i.category!==cat)return false;
+    if(selectedCats.size>0&&!selectedCats.has(i.category))return false;
     if(dem&&i.demand!==dem)return false;
     return true;
   });
+  const dir=sortDir==="asc"?1:-1;
   list.sort((a,b)=>{
-    if(sort==="value-desc")return b.value-a.value;
-    if(sort==="value-asc")return a.value-b.value;
-    if(sort==="name-asc")return a.name.localeCompare(b.name);
-    if(sort==="demand-desc")return(demandOrder[b.demand]||0)-(demandOrder[a.demand]||0);
+    if(sortCol==="value")return dir*(a.value-b.value);
+    if(sortCol==="name")return dir*a.name.localeCompare(b.name);
+    if(sortCol==="cat")return dir*(a.category||"").localeCompare(b.category||"");
+    if(sortCol==="demand")return dir*((demandOrder[a.demand]||0)-(demandOrder[b.demand]||0));
     return 0;
   });
   document.getElementById("v-count").textContent=list.length;
