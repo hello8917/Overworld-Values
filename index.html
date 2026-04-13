@@ -246,6 +246,27 @@ tr:hover td { background: var(--bg3); }
 .profile-btn { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--gold); background: var(--gold-dark); color: var(--gold); font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; margin-top: 4px; }
 .profile-btn:hover { background: #8a6c2a; }
 .profile-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* PROFILE PAGE */
+.profile-page { flex: 1; overflow-y: auto; }
+.profile-hero { background: linear-gradient(135deg, #2a1800 0%, #1a1208 60%, #2a1800 100%); border-bottom: 2px solid var(--gold-dark); padding: 28px 32px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.profile-hero-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--gold-dark); background: var(--bg3); object-fit: cover; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: "Cinzel", serif; font-size: 32px; color: var(--gold); }
+.profile-hero-info { flex: 1; min-width: 0; }
+.profile-hero-name { font-family: "Cinzel", serif; font-size: clamp(20px,3vw,30px); color: var(--gold); font-weight: 600; letter-spacing: 0.06em; }
+.profile-hero-roblox { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
+.profile-hero-roblox span { color: var(--text); font-weight: 700; }
+.profile-hero-joined { font-size: 12px; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.05em; }
+.profile-back { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text-dim); font-family: "Lato", sans-serif; font-size: 13px; padding: 7px 14px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+.profile-back:hover { border-color: var(--gold); color: var(--gold); }
+.profile-stats { display: flex; gap: 12px; flex-wrap: wrap; padding: 16px 24px; background: var(--bg2); border-bottom: 1px solid var(--border); }
+.profile-stat { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 18px; text-align: center; }
+.profile-stat-val { font-family: "Cinzel", serif; font-size: 22px; color: var(--gold); font-weight: 600; }
+.profile-stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+.profile-trades-title { font-family: "Cinzel", serif; color: var(--gold); font-size: 14px; letter-spacing: 0.08em; padding: 14px 24px 10px; border-bottom: 1px solid var(--border); background: var(--bg4); }
+.profile-trades-list { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.profile-no-trades { text-align: center; padding: 40px; color: var(--text-dim); font-size: 14px; }
+.tb-username-link { cursor: pointer; text-decoration: none; color: var(--text); transition: color 0.15s; }
+.tb-username-link:hover { color: var(--gold); }
 </style>
 </head>
 <body>
@@ -291,6 +312,7 @@ tr:hover td { background: var(--bg3); }
   <button class="nav-btn active" onclick="showPage('values')" id="nav-values"><span class="nav-icon">📋</span>Value List</button>
   <button class="nav-btn" onclick="showPage('trade')" id="nav-trade"><span class="nav-icon">⚖️</span>Trade Calc</button>
   <button class="nav-btn" onclick="onBoardClick()" id="nav-board"><span class="nav-icon">📣</span>Trade Board</button>
+  <button class="nav-btn" id="nav-profile" style="display:none"><span class="nav-icon">👤</span>Profile</button>
 </nav>
 
 <!-- VALUES PAGE -->
@@ -389,6 +411,32 @@ tr:hover td { background: var(--bg3); }
     </div>
     <div class="tb-count">Showing <span id="tb-count">—</span> active trades</div>
     <div class="tb-list" id="tb-list"><div class="tb-empty"><div class="tb-empty-icon">📣</div>Loading trades...</div></div>
+  </div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div class="page" id="page-profile">
+  <div class="profile-page">
+    <div style="padding:16px 24px 0">
+      <button class="profile-back" onclick="goBackFromProfile()">← Back to Trade Board</button>
+    </div>
+    <div class="profile-hero" id="profile-hero">
+      <div class="profile-hero-avatar" id="profile-hero-avatar">?</div>
+      <div class="profile-hero-info">
+        <div class="profile-hero-name" id="profile-hero-name">Loading...</div>
+        <div class="profile-hero-roblox">Roblox: <span id="profile-hero-roblox">—</span></div>
+        <div class="profile-hero-joined" id="profile-hero-joined"></div>
+      </div>
+    </div>
+    <div class="profile-stats">
+      <div class="profile-stat"><div class="profile-stat-val" id="profile-stat-trades">—</div><div class="profile-stat-label">Total Trades</div></div>
+      <div class="profile-stat"><div class="profile-stat-val" id="profile-stat-active">—</div><div class="profile-stat-label">Active Now</div></div>
+      <div class="profile-stat"><div class="profile-stat-val" id="profile-stat-offering">—</div><div class="profile-stat-label">Total Offering</div></div>
+    </div>
+    <div class="profile-trades-title">📋 All Trade Listings</div>
+    <div class="profile-trades-list" id="profile-trades-list">
+      <div class="profile-no-trades">Loading trades...</div>
+    </div>
   </div>
 </div>
 
@@ -579,7 +627,10 @@ async function saveProfile(){
   if(!roblox){alert("Please enter your Roblox username!");return;}
   const btn=document.getElementById("profile-save-btn");
   btn.disabled=true;btn.textContent="Saving...";
-  const{error}=await sbDB.upsert("profiles",{id:currentUser.id,roblox_username:roblox,discord_username:(currentUser.user_metadata?.full_name||currentUser.email||currentUser.id||"")});
+  const meta=currentUser.user_metadata||{};
+  const avatar_url=meta.avatar_url||null;
+  const discord_username=meta.full_name||meta.name||meta.custom_claims?.global_name||currentUser.email||"";
+  const{error}=await sbDB.upsert("profiles",{id:currentUser.id,roblox_username:roblox,discord_username,avatar_url});
   if(error){alert("Could not save profile. Try again.");btn.disabled=false;btn.textContent="Save & Continue";return;}
   currentProfile={...currentProfile,roblox_username:roblox};
   renderAuthBar(currentUser);
@@ -787,8 +838,8 @@ async function submitTrade(){
   const delete_token=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+Date.now().toString(36);
   try{
     const {data,error}=await sbDB.insert("trades",{username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null,delete_token});
-    if(error)throw new Error(error);
-    if(data&&data[0]&&data[0].id)saveToken(data[0].id,delete_token);
+    if(error){ console.warn("Insert warning:",error); }
+    if(data&&data[0]&&data[0].id) saveToken(data[0].id,delete_token);
     closePT();
     document.getElementById("pt-username").value="";
     document.getElementById("pt-desc").value="";
@@ -832,7 +883,7 @@ function filterBoard(){
       <div class="tb-card-header">
         <div class="tb-user">
           <div class="tb-avatar">${(t.username||"?")[0].toUpperCase()}</div>
-          <div><div class="tb-username">${t.username}</div><div class="tb-time">${timeAgo(t.created_at)}</div></div>
+          <div><div class="tb-username"><span class="tb-username-link" onclick="openProfile('${t.username}')">${t.username}</span></div><div class="tb-time">${timeAgo(t.created_at)}</div></div>
         </div>
         <div class="tb-meta">
           <span class="tb-expires">expires ${expiresIn(t.created_at)}</span>
@@ -887,6 +938,94 @@ fetch(CSV_URL).then(r=>r.text()).then(text=>{
 
 // Init auth immediately — no external library needed
 initAuth();
+
+// ---- PROFILE PAGE ----
+let profileHistory = "board";
+
+async function openProfile(username){
+  profileHistory = document.querySelector(".nav-btn.active")?.id?.replace("nav-","") || "board";
+  showPage("profile");
+  document.getElementById("nav-profile").style.display="flex";
+  document.getElementById("nav-profile").classList.add("active");
+  document.querySelectorAll(".nav-btn:not(#nav-profile)").forEach(b=>b.classList.remove("active"));
+
+  // Load profile data
+  const profiles = await sbDB.select("profiles", `roblox_username=eq.${encodeURIComponent(username)}`);
+  const profile = Array.isArray(profiles) && profiles[0];
+
+  // Load all trades by this user
+  const trades = await sbDB.select("trades", `username=eq.${encodeURIComponent(username)}&order=created_at.desc`);
+  const tradeList = Array.isArray(trades) ? trades : [];
+
+  // Set hero
+  const initial = username[0].toUpperCase();
+  const avatarEl = document.getElementById("profile-hero-avatar");
+  if(profile && profile.avatar_url){
+    avatarEl.innerHTML = `<img src="${profile.avatar_url}" style="width:80px;height:80px;border-radius:50%;object-fit:cover">`;
+  } else {
+    avatarEl.textContent = initial;
+  }
+  document.getElementById("profile-hero-name").textContent = username;
+  document.getElementById("profile-hero-roblox").textContent = profile?.roblox_username || username;
+
+  const joined = profile?.created_at ? new Date(profile.created_at).toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}) : null;
+  document.getElementById("profile-hero-joined").textContent = joined ? "Member since " + joined : "";
+
+  // Stats
+  const now = Date.now();
+  const activeTrades = tradeList.filter(t => (now - new Date(t.created_at)) < 86400000);
+  const totalOffering = tradeList.reduce((s,t)=>s+(t.offering_total||0),0);
+  document.getElementById("profile-stat-trades").textContent = tradeList.length;
+  document.getElementById("profile-stat-active").textContent = activeTrades.length;
+  document.getElementById("profile-stat-offering").textContent = totalOffering > 0 ? totalOffering.toLocaleString() : "0";
+
+  // Trade list
+  const listEl = document.getElementById("profile-trades-list");
+  if(!tradeList.length){
+    listEl.innerHTML = `<div class="profile-no-trades">No trades posted yet.</div>`;
+    return;
+  }
+
+  function itemsHTML(items){
+    if(!items||!items.length) return `<span style="color:var(--text-dim);font-size:12px">Nothing</span>`;
+    return items.map(i=>`<div class="tb-item">${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\'tb-item-ph\'>?</div>'">`:`<div class="tb-item-ph">?</div>`}<span class="tb-item-name">${i.qty>1?`${i.qty}x `:""} ${i.name}</span><span class="tb-item-val">${(i.value*(i.qty||1)).toLocaleString()}</span></div>`).join("");
+  }
+
+  const myTokens = getMyTokens();
+  listEl.innerHTML = tradeList.map(t=>{
+    const expired = (now - new Date(t.created_at)) >= 86400000;
+    const canDelete = !!myTokens[t.id];
+    return `<div class="tb-card" style="${expired?"opacity:0.5":""}">
+      <div class="tb-card-header">
+        <div class="tb-user">
+          <div class="tb-avatar">${initial}</div>
+          <div><div class="tb-username">${username}</div><div class="tb-time">${timeAgo(t.created_at)}${expired?" · <span style='color:var(--red)'>expired</span>":""}</div></div>
+        </div>
+        <div class="tb-meta">
+          ${!expired?`<span class="tb-expires">expires ${expiresIn(t.created_at)}</span>`:""}
+          ${canDelete?`<button class="tb-delete" onclick="deleteTrade('${t.id}',this)" title="Delete">🗑️</button>`:""}
+        </div>
+      </div>
+      <div class="tb-sides">
+        <div><div class="tb-side-label">Offering</div><div class="tb-items">${itemsHTML(t.offering)}</div></div>
+        <div class="tb-arrow">→</div>
+        <div><div class="tb-side-label">Wanting</div><div class="tb-items">${itemsHTML(t.wanting)}</div></div>
+      </div>
+      <div class="tb-totals">
+        <span>Offering: <strong>${(t.offering_total||0).toLocaleString()}</strong></span>
+        <span>Wanting: <strong>${(t.wanting_total||0).toLocaleString()}</strong></span>
+      </div>
+      ${t.description?`<div class="tb-desc">"${t.description}"</div>`:""}
+    </div>`;
+  }).join("");
+}
+
+function goBackFromProfile(){
+  document.getElementById("nav-profile").style.display="none";
+  document.getElementById("nav-profile").classList.remove("active");
+  if(profileHistory==="board"){ showPage("board"); document.getElementById("nav-board").classList.add("active"); loadBoard(); }
+  else { showPage(profileHistory); document.getElementById("nav-"+profileHistory).classList.add("active"); }
+}
 </script>
 
 </body>
