@@ -537,6 +537,10 @@ function openPostTrade(){
 }
 function closePT(){document.getElementById("pt-overlay").classList.remove("open");}
 
+function getMyTokens(){try{return JSON.parse(localStorage.getItem("ow_tokens")||"{}");}catch{return{};}}
+function saveToken(id,token){const t=getMyTokens();t[id]=token;localStorage.setItem("ow_tokens",JSON.stringify(t));}
+function isMine(id){return!!getMyTokens()[id];}
+
 async function submitTrade(){
   const username=document.getElementById("pt-username").value.trim();
   if(!username){alert("Please enter your Roblox username!");return;}
@@ -547,13 +551,16 @@ async function submitTrade(){
   const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
   const offering=yourItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
   const wanting=theirItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
+  const delete_token=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+Date.now().toString(36);
   try{
     const res=await fetch(`${SB_URL}/rest/v1/trades`,{
       method:"POST",
-      headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`,"Prefer":"return=minimal"},
-      body:JSON.stringify({username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null})
+      headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`,"Prefer":"return=representation"},
+      body:JSON.stringify({username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null,delete_token})
     });
     if(!res.ok)throw new Error();
+    const data=await res.json();
+    if(data&&data[0]&&data[0].id)saveToken(data[0].id,delete_token);
     closePT();
     document.getElementById("pt-username").value="";
     document.getElementById("pt-desc").value="";
@@ -601,7 +608,7 @@ function filterBoard(){
         </div>
         <div class="tb-meta">
           <span class="tb-expires">expires ${expiresIn(t.created_at)}</span>
-          <button class="tb-delete" onclick="deleteTrade('${t.id}',this)" title="Delete this listing">🗑️</button>
+          ${isMine(t.id)?`<button class="tb-delete" onclick="deleteTrade('${t.id}',this)" title="Delete your listing">🗑️</button>`:""}
         </div>
       </div>
       <div class="tb-sides">
@@ -618,10 +625,12 @@ function filterBoard(){
 }
 
 async function deleteTrade(id,btn){
-  if(!confirm("Delete this trade listing?"))return;
+  const tokens=getMyTokens();
+  if(!tokens[id]){alert("You can only delete your own trades.");return;}
+  if(!confirm("Delete your trade listing?"))return;
   btn.disabled=true;
   try{
-    await fetch(`${SB_URL}/rest/v1/trades?id=eq.${id}`,{method:"DELETE",headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`}});
+    await fetch(`${SB_URL}/rest/v1/trades?id=eq.${id}&delete_token=eq.${tokens[id]}`,{method:"DELETE",headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`}});
     allTrades=allTrades.filter(t=>t.id!==id);filterBoard();
   }catch(e){alert("Could not delete. Try again.");btn.disabled=false;}
 }
