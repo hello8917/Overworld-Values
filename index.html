@@ -205,8 +205,7 @@ tr:hover td { background: var(--bg3); }
 .tb-empty { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 14px; }
 .tb-empty-icon { font-size: 36px; margin-bottom: 12px; }
 .footer { text-align: center; padding: 12px; font-size: 11px; color: var(--text-dim); border-top: 1px solid var(--border); background: var(--bg3); letter-spacing: 0.08em; text-transform: uppercase; flex-shrink: 0; }
-@media (max-width: 600px) {
-  .trade-main { grid-template-columns: 1fr; overflow: visible; }
+
   .side { border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; }
   .ss-sides { grid-template-columns: 1fr; }
   .tb-sides { grid-template-columns: 1fr; }
@@ -283,6 +282,62 @@ tr:hover td { background: var(--bg3); }
 .tb-filter-btn { padding:5px 14px; border-radius:20px; font-size:12px; font-weight:700; background:var(--bg3); color:var(--text-dim); border:1px solid var(--border); cursor:pointer; transition:all 0.15s; }
 .tb-filter-btn:hover { border-color:var(--gold-dim); color:var(--gold-dim); }
 .tb-filter-btn.active { background:var(--gold-deeper); color:var(--gold); border-color:var(--gold); }
+
+/* FILTER BAR */
+.filter-toggle-btn { display:inline-flex; align-items:center; gap:6px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:8px 14px; color:var(--text-dim); font-family:"Lato",sans-serif; font-size:13px; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+.filter-toggle-btn:hover, .filter-toggle-btn.active { border-color:var(--gold); color:var(--gold); background:var(--bg4); }
+.filter-bar { background:var(--bg2); border-bottom:1px solid var(--border); padding:14px 20px; display:flex; gap:24px; flex-wrap:wrap; }
+.filter-section { display:flex; flex-direction:column; gap:8px; }
+.filter-section-title { font-family:"Cinzel",serif; font-size:11px; color:var(--gold-dim); letter-spacing:0.08em; text-transform:uppercase; }
+.filter-cats { display:flex; flex-wrap:wrap; gap:6px; }
+.filter-range-row { display:flex; gap:10px; }
+.filter-range-col { display:flex; flex-direction:column; gap:4px; }
+.filter-range-label { font-size:11px; color:var(--text-dim); }
+.filter-range-input { background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:6px 10px; color:var(--text); font-family:"Lato",sans-serif; font-size:13px; outline:none; width:120px; }
+.filter-range-input:focus { border-color:var(--gold); }
+
+@media (max-width: 768px) {
+  .header { padding: 14px 16px 12px; }
+  .header h1 { font-size: 28px; }
+  .header-links { gap: 6px; }
+  .header-link { font-size: 11px; padding: 5px 10px; }
+  .nav-btn { font-size: 10px; padding: 10px 6px; letter-spacing: 0.02em; }
+  .nav-btn .nav-icon { margin-right: 3px; font-size: 12px; }
+  .controls { padding: 10px 12px; gap: 8px; }
+  .search-wrap input { font-size: 13px; }
+  .filter-bar { padding: 12px; gap: 14px; }
+  .filter-range-input { width: 90px; }
+  .auth-bar { padding: 6px 12px; }
+  .auth-username { font-size: 12px; }
+  .auth-btn { font-size: 11px; padding: 4px 10px; }
+  .trade-main { grid-template-columns: 1fr; overflow: visible; }
+  .side { border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; max-height: none; }
+  .result-bar { padding: 10px 14px; }
+  .result-btns { flex-direction: column; }
+  .tb-controls { padding: 10px 12px; gap: 8px; }
+  .tb-card { padding: 10px 12px; }
+  .tb-sides { grid-template-columns: 1fr; }
+  .tb-arrow { transform: rotate(90deg); padding-top: 0; text-align: center; }
+  .tb-card-header { flex-wrap: wrap; gap: 6px; }
+  .profile-hero { padding: 16px; gap: 14px; }
+  .profile-hero-avatar { width: 60px; height: 60px; font-size: 24px; }
+  .profile-hero-name { font-size: 20px; }
+  .profile-stats { padding: 10px 12px; gap: 8px; }
+  .profile-stat { padding: 8px 12px; }
+  .profile-stat-val { font-size: 18px; }
+  .profile-trades-list { padding: 10px; }
+  .ss-sides { grid-template-columns: 1fr; }
+  .pt-card { padding: 18px; }
+  table { font-size: 13px; }
+  td, th { padding: 8px 10px; }
+  .item-img, .img-ph { width: 40px; height: 40px; }
+  .item-count { font-size: 11px; }
+}
+@media (max-width: 400px) {
+  .header h1 { font-size: 22px; }
+  .nav-btn .nav-icon { display: none; }
+  .nav-btn { font-size: 9px; padding: 10px 4px; }
+}
 </style>
 </head>
 <body>
@@ -336,7 +391,7 @@ tr:hover td { background: var(--bg3); }
   <div class="controls">
     <div class="search-wrap">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="v-search" placeholder="Search items... (press / to focus)" oninput="renderValues()">
+      <input type="text" id="v-search" placeholder="Search items..." oninput="renderValues()">
     </div>
     <select id="v-demand" onchange="renderValues()">
       <option value="">All Demand</option>
@@ -344,9 +399,31 @@ tr:hover td { background: var(--bg3); }
       <option value="Medium">Medium</option>
       <option value="Low">Low</option>
     </select>
+    <button class="filter-toggle-btn" id="filter-toggle-btn" onclick="toggleFilterBar()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
+      Filters
+    </button>
   </div>
-  <div class="cat-bar" id="cat-bar"></div>
-  <div class="item-count">Showing <span id="v-count">—</span> items <span class="slash-hint">/ to search</span></div>
+  <div class="filter-bar" id="filter-bar" style="display:none">
+    <div class="filter-section">
+      <div class="filter-section-title">Category</div>
+      <div class="filter-cats" id="filter-cats"></div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-section-title">Value Range</div>
+      <div class="filter-range-row">
+        <div class="filter-range-col">
+          <label class="filter-range-label">Min</label>
+          <input type="number" class="filter-range-input" id="range-min" placeholder="0" oninput="renderValues()">
+        </div>
+        <div class="filter-range-col">
+          <label class="filter-range-label">Max</label>
+          <input type="number" class="filter-range-input" id="range-max" placeholder="Any" oninput="renderValues()">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="item-count">Showing <span id="v-count">—</span> items <span class="slash-hint" style="display:none" id="slash-hint">/ to search</span></div>
   <div class="table-wrap">
     <table>
       <thead><tr>
@@ -444,6 +521,7 @@ tr:hover td { background: var(--bg3); }
       <div class="profile-hero-avatar" id="profile-hero-avatar">?</div>
       <div class="profile-hero-info">
         <div class="profile-hero-name" id="profile-hero-name">Loading...</div>
+        <div class="profile-hero-discord" id="profile-hero-discord" style="font-size:13px;color:var(--text-dim);margin-top:2px"></div>
         <div class="profile-hero-roblox">Roblox: <span id="profile-hero-roblox">—</span></div>
         <div class="profile-hero-joined" id="profile-hero-joined"></div>
         <div class="profile-follow-row">
@@ -698,6 +776,9 @@ function showPage(p){
   document.querySelectorAll(".nav-btn").forEach(el=>el.classList.remove("active"));
   document.getElementById("page-"+p).classList.add("active");
   document.getElementById("nav-"+p).classList.add("active");
+  // Hide profile nav tab unless we are on profile
+  const profileNav=document.getElementById("nav-profile");
+  if(profileNav && p!=="profile") profileNav.style.display="none";
 }
 
 function parseCSV(text){
@@ -726,10 +807,18 @@ function thSort(col){
 
 function populateCats(){
   const cats=[...new Set(allItems.map(i=>i.category).filter(Boolean))].sort();
-  const bar=document.getElementById("cat-bar");
-  let html=`<span class="cat-pill active" onclick="toggleCat('__all__')">All</span>`;
-  cats.forEach(c=>{html+=`<span class="cat-pill" onclick="toggleCat('${c}')">${c}</span>`;});
-  bar.innerHTML=html;
+  const bar=document.getElementById("filter-cats");
+  let h=`<span class="cat-pill active" onclick="toggleCat('__all__')">All</span>`;
+  cats.forEach(c=>{h+=`<span class="cat-pill" onclick="toggleCat('${c}')">${c}</span>`;});
+  bar.innerHTML=h;
+}
+
+function toggleFilterBar(){
+  const bar=document.getElementById("filter-bar");
+  const btn=document.getElementById("filter-toggle-btn");
+  const open=bar.style.display==="flex";
+  bar.style.display=open?"none":"flex";
+  btn.classList.toggle("active",!open);
 }
 
 function toggleCat(c){
@@ -745,10 +834,14 @@ function toggleCat(c){
 function renderValues(){
   const q=document.getElementById("v-search").value.toLowerCase();
   const dem=document.getElementById("v-demand").value;
+  const minVal=parseInt(document.getElementById("range-min")?.value||"0")||0;
+  const maxVal=parseInt(document.getElementById("range-max")?.value||"0")||0;
   let list=allItems.filter(i=>{
     if(q&&!i.name.toLowerCase().includes(q))return false;
     if(selectedCats.size>0&&!selectedCats.has(i.category))return false;
     if(dem&&i.demand!==dem)return false;
+    if(minVal>0&&i.value<minVal)return false;
+    if(maxVal>0&&i.value>maxVal)return false;
     return true;
   });
   const dir=sortDir==="asc"?1:-1;
@@ -1080,6 +1173,7 @@ async function openProfile(username){
     avatarEl.textContent = initial;
   }
   document.getElementById("profile-hero-name").textContent = username;
+  document.getElementById("profile-hero-discord").textContent = profile?.discord_username ? "Discord: "+profile.discord_username : "";
   document.getElementById("profile-hero-roblox").textContent = profile?.roblox_username || username;
 
   const joined = profile?.created_at ? new Date(profile.created_at).toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}) : null;
@@ -1161,3 +1255,4 @@ function goBackFromProfile(){
 
 </body>
 </html>
+
