@@ -267,6 +267,22 @@ tr:hover td { background: var(--bg3); }
 .profile-no-trades { text-align: center; padding: 40px; color: var(--text-dim); font-size: 14px; }
 .tb-username-link { cursor: pointer; text-decoration: none; color: var(--text); transition: color 0.15s; }
 .tb-username-link:hover { color: var(--gold); }
+
+/* TRUST & FOLLOW */
+.badge-trusted { display:inline-flex; align-items:center; gap:4px; background:#1a2800; color:#80c040; border:1px solid #406000; border-radius:20px; padding:3px 10px; font-size:11px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; }
+.profile-follow-row { display:flex; align-items:center; gap:14px; margin-top:10px; flex-wrap:wrap; }
+.follow-stat { font-size:13px; color:var(--text-dim); cursor:pointer; }
+.follow-stat:hover { color:var(--gold); }
+.follow-stat strong { color:var(--text); font-size:15px; margin-right:3px; }
+.follow-btn { padding:6px 18px; border-radius:20px; border:2px solid var(--gold-dark); background:rgba(240,192,64,0.1); color:var(--gold); font-family:"Cinzel",serif; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.2s; letter-spacing:0.05em; }
+.follow-btn:hover { background:rgba(240,192,64,0.22); border-color:var(--gold); }
+.follow-btn.following { background:rgba(240,192,64,0.08); color:var(--text-dim); border-color:var(--border); }
+.follow-btn.following:hover { border-color:var(--red); color:var(--red); }
+.tb-trusted { display:inline-flex; align-items:center; gap:3px; background:#1a2800; color:#80c040; border:1px solid #406000; border-radius:10px; padding:2px 7px; font-size:10px; font-weight:700; letter-spacing:0.04em; margin-left:6px; vertical-align:middle; }
+.tb-filter-row { display:flex; gap:8px; align-items:center; }
+.tb-filter-btn { padding:5px 14px; border-radius:20px; font-size:12px; font-weight:700; background:var(--bg3); color:var(--text-dim); border:1px solid var(--border); cursor:pointer; transition:all 0.15s; }
+.tb-filter-btn:hover { border-color:var(--gold-dim); color:var(--gold-dim); }
+.tb-filter-btn.active { background:var(--gold-deeper); color:var(--gold); border-color:var(--gold); }
 </style>
 </head>
 <body>
@@ -407,6 +423,10 @@ tr:hover td { background: var(--bg3); }
   <div id="board-content" style="display:none;flex:1;flex-direction:column;min-height:0">
     <div class="tb-controls">
       <input type="text" class="tb-search" id="tb-search" placeholder="Search by item name or username..." oninput="filterBoard()">
+      <div class="tb-filter-row">
+        <button class="tb-filter-btn active" id="filter-all" onclick="setBoardFilter('all')">All</button>
+        <button class="tb-filter-btn" id="filter-following" onclick="setBoardFilter('following')">Following</button>
+      </div>
       <button class="tb-refresh" onclick="loadBoard()">↻ Refresh</button>
     </div>
     <div class="tb-count">Showing <span id="tb-count">—</span> active trades</div>
@@ -426,6 +446,12 @@ tr:hover td { background: var(--bg3); }
         <div class="profile-hero-name" id="profile-hero-name">Loading...</div>
         <div class="profile-hero-roblox">Roblox: <span id="profile-hero-roblox">—</span></div>
         <div class="profile-hero-joined" id="profile-hero-joined"></div>
+        <div class="profile-follow-row">
+          <span class="follow-stat" id="profile-followers-stat"><strong id="profile-followers-count">0</strong>Followers</span>
+          <span class="follow-stat" id="profile-following-stat"><strong id="profile-following-count">0</strong>Following</span>
+          <button class="follow-btn" id="profile-follow-btn" onclick="toggleFollow()" style="display:none">Follow</button>
+          <span id="profile-trust-badge"></span>
+        </div>
       </div>
     </div>
     <div class="profile-stats">
@@ -570,6 +596,21 @@ const sbDB = {
       headers:{...sbHeaders(),...authHeader}
     });
     return{ok:res.ok};
+  },
+  async insertFollow(data){
+    const res = await fetch(`${SB_URL}/rest/v1/follows`,{
+      method:"POST",
+      headers:{...sbHeaders(),"Prefer":"return=minimal"},
+      body:JSON.stringify(data)
+    });
+    return{ok:res.ok};
+  },
+  async deleteFollow(follower_id, following_username){
+    const res = await fetch(`${SB_URL}/rest/v1/follows?follower_id=eq.${follower_id}&following_username=eq.${encodeURIComponent(following_username)}`,{
+      method:"DELETE",
+      headers:sbHeaders()
+    });
+    return{ok:res.ok};
   }
 };
 
@@ -598,7 +639,9 @@ function renderAuthBar(user){
   const avatar=meta.avatar_url?`<img class="auth-avatar" src="${meta.avatar_url}" alt="">`:"";
   const dname=meta.full_name||meta.name||meta.custom_claims?.global_name||user.email||"Discord User";
   const rname=currentProfile?.roblox_username?`<span class="auth-roblox">Roblox: ${currentProfile.roblox_username}</span>`:"";
-  bar.innerHTML=`<div class="auth-user">${avatar}<div><span class="auth-username">${dname}</span>${rname?` · ${rname}`:""}</div></div><button class="auth-btn signout" onclick="signOut()">Sign out</button>`;
+  const trusted=currentProfile?.follower_count>=10?`<span class="badge-trusted">✓ Trusted</span>`:"";
+  const clickName=currentProfile?.roblox_username?`onclick="openProfile('${currentProfile.roblox_username}')" style="cursor:pointer"`:"";
+  bar.innerHTML=`<div class="auth-user">${avatar}<div><span class="auth-username" ${clickName}>${dname}</span> ${trusted}${rname?` · ${rname}`:""}</div></div><button class="auth-btn signout" onclick="signOut()">Sign out</button>`;
 }
 
 async function signInWithDiscord(){
@@ -646,7 +689,7 @@ function onBoardClick(){
   } else {
     document.getElementById("board-lock").style.display="none";
     document.getElementById("board-content").style.display="flex";
-    loadBoard();
+    loadMyFollowing().then(()=>loadBoard());
   }
 }
 
@@ -855,7 +898,18 @@ async function loadBoard(){
     const res=await fetch(`${SB_URL}/rest/v1/trades?created_at=gte.${encodeURIComponent(cutoff)}&order=created_at.desc`,{
       headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`}
     });
-    allTrades=await res.json();
+    const trades=await res.json();
+    // Fetch follower counts for trust badges
+    const usernames=[...new Set(trades.map(t=>t.username))];
+    const trustedSet=new Set();
+    for(const u of usernames){
+      try{
+        const fRows=await sbDB.select("follows",`following_username=eq.${encodeURIComponent(u)}`);
+        if(Array.isArray(fRows)&&fRows.length>=10) trustedSet.add(u);
+      }catch(e){}
+    }
+    allTrades=trades.map(t=>({...t,trusted:trustedSet.has(t.username)}));
+    if(currentUser) await loadMyFollowing();
     filterBoard();
   }catch(e){
     document.getElementById("tb-list").innerHTML=`<div class="tb-empty">⚠️ Failed to load trades.</div>`;
@@ -864,10 +918,16 @@ async function loadBoard(){
 
 function filterBoard(){
   const q=(document.getElementById("tb-search").value||"").toLowerCase();
-  const list=q?allTrades.filter(t=>{
+  let list = allTrades;
+  if(boardFilter==="following" && myFollowing.size>0){
+    list = list.filter(t=>myFollowing.has(t.username));
+  } else if(boardFilter==="following" && myFollowing.size===0){
+    list = [];
+  }
+  if(q) list=list.filter(t=>{
     const names=[...t.offering,...t.wanting].map(i=>i.name.toLowerCase());
     return t.username.toLowerCase().includes(q)||names.some(n=>n.includes(q));
-  }):allTrades;
+  });
   document.getElementById("tb-count").textContent=list.length;
   const el=document.getElementById("tb-list");
   if(!list.length){
@@ -883,7 +943,7 @@ function filterBoard(){
       <div class="tb-card-header">
         <div class="tb-user">
           <div class="tb-avatar">${(t.username||"?")[0].toUpperCase()}</div>
-          <div><div class="tb-username"><span class="tb-username-link" onclick="openProfile('${t.username}')">${t.username}</span></div><div class="tb-time">${timeAgo(t.created_at)}</div></div>
+          <div><div class="tb-username"><span class="tb-username-link" onclick="openProfile('${t.username}')">${t.username}</span>${t.trusted?`<span class="tb-trusted">✓ Trusted</span>`:""}</div><div class="tb-time">${timeAgo(t.created_at)}</div></div>
         </div>
         <div class="tb-meta">
           <span class="tb-expires">expires ${expiresIn(t.created_at)}</span>
@@ -941,6 +1001,51 @@ initAuth();
 
 // ---- PROFILE PAGE ----
 let profileHistory = "board";
+let currentProfileUsername = null;
+let boardFilter = "all";
+let myFollowing = new Set();
+
+function setBoardFilter(f){
+  boardFilter = f;
+  document.getElementById("filter-all").classList.toggle("active", f==="all");
+  document.getElementById("filter-following").classList.toggle("active", f==="following");
+  filterBoard();
+}
+
+async function loadMyFollowing(){
+  if(!currentUser) return;
+  try{
+    const rows = await sbDB.select("follows", `follower_id=eq.${currentUser.id}`);
+    myFollowing = new Set(Array.isArray(rows)?rows.map(r=>r.following_username):[]);
+  }catch(e){ myFollowing = new Set(); }
+}
+
+async function toggleFollow(){
+  if(!currentUser){ alert("Sign in to follow users!"); return; }
+  if(!currentProfileUsername) return;
+  const btn = document.getElementById("profile-follow-btn");
+  const isFollowing = myFollowing.has(currentProfileUsername);
+  btn.disabled = true;
+  try{
+    if(isFollowing){
+      await sbDB.deleteFollow(currentUser.id, currentProfileUsername);
+      myFollowing.delete(currentProfileUsername);
+      // decrement follower_count
+      const profiles = await sbDB.select("profiles",`roblox_username=eq.${encodeURIComponent(currentProfileUsername)}`);
+      const p = Array.isArray(profiles)&&profiles[0];
+      if(p){ await sbDB.upsert("profiles",{...p, follower_count:Math.max(0,(p.follower_count||1)-1)}); }
+    } else {
+      await sbDB.insertFollow({follower_id:currentUser.id, following_username:currentProfileUsername});
+      myFollowing.add(currentProfileUsername);
+      // increment follower_count
+      const profiles = await sbDB.select("profiles",`roblox_username=eq.${encodeURIComponent(currentProfileUsername)}`);
+      const p = Array.isArray(profiles)&&profiles[0];
+      if(p){ await sbDB.upsert("profiles",{...p, follower_count:(p.follower_count||0)+1}); }
+    }
+    await openProfile(currentProfileUsername);
+  }catch(e){ console.error(e); }
+  btn.disabled = false;
+}
 
 async function openProfile(username){
   profileHistory = document.querySelector(".nav-btn.active")?.id?.replace("nav-","") || "board";
@@ -957,6 +1062,15 @@ async function openProfile(username){
   const trades = await sbDB.select("trades", `username=eq.${encodeURIComponent(username)}&order=created_at.desc`);
   const tradeList = Array.isArray(trades) ? trades : [];
 
+  currentProfileUsername = username;
+
+  // Load follow counts
+  const followersRes = await sbDB.select("follows", `following_username=eq.${encodeURIComponent(username)}`);
+  const followingRes = await sbDB.select("follows", `follower_id=eq.${profile?.id||"none"}`);
+  const followerCount = Array.isArray(followersRes) ? followersRes.length : 0;
+  const followingCount = Array.isArray(followingRes) ? followingRes.length : 0;
+  const isTrusted = followerCount >= 10;
+
   // Set hero
   const initial = username[0].toUpperCase();
   const avatarEl = document.getElementById("profile-hero-avatar");
@@ -970,6 +1084,23 @@ async function openProfile(username){
 
   const joined = profile?.created_at ? new Date(profile.created_at).toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}) : null;
   document.getElementById("profile-hero-joined").textContent = joined ? "Member since " + joined : "";
+
+  // Follow stats
+  document.getElementById("profile-followers-count").textContent = followerCount;
+  document.getElementById("profile-following-count").textContent = followingCount;
+  document.getElementById("profile-trust-badge").innerHTML = isTrusted ? `<span class="badge-trusted">✓ Trusted</span>` : "";
+
+  // Follow button — only show if logged in and not own profile
+  const followBtn = document.getElementById("profile-follow-btn");
+  const isOwnProfile = currentUser && currentProfile?.roblox_username === username;
+  if(currentUser && !isOwnProfile){
+    followBtn.style.display = "inline-flex";
+    const amFollowing = myFollowing.has(username);
+    followBtn.textContent = amFollowing ? "Following" : "Follow";
+    followBtn.className = "follow-btn" + (amFollowing ? " following" : "");
+  } else {
+    followBtn.style.display = "none";
+  }
 
   // Stats
   const now = Date.now();
