@@ -6,6 +6,16 @@
 <title>Overworld Values</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<script>
+// Load Supabase dynamically, then init auth
+window.addEventListener("DOMContentLoaded",function(){
+  var s=document.createElement("script");
+  s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
+  s.onload=function(){ initAuth(); };
+  s.onerror=function(){ console.error("Supabase failed"); };
+  document.head.appendChild(s);
+});
+</script>
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -482,20 +492,35 @@ function renderAuthBar(user){
 }
 
 async function signInWithDiscord(){
-  // Make sure supabase is ready — initialize if not yet done
   if(!supabase){
+    // Supabase not ready yet — try initializing
     if(!initSupabase()){
-      alert("Auth is still loading, please try again in a second.");
+      // Still not ready, wait up to 5 seconds
+      let attempts=0;
+      const wait=setInterval(()=>{
+        attempts++;
+        if(window.supabase&&initSupabase()){
+          clearInterval(wait);
+          doSignIn();
+        } else if(attempts>10){
+          clearInterval(wait);
+          alert("Could not connect to auth service. Please refresh the page and try again.");
+        }
+      },500);
       return;
     }
   }
+  doSignIn();
+}
+
+async function doSignIn(){
   const redirectTo=window.location.href.split("?")[0].split("#")[0];
   try{
     const {error}=await supabase.auth.signInWithOAuth({provider:"discord",options:{redirectTo}});
     if(error) throw error;
   }catch(e){
     console.error("Sign in error:",e);
-    alert("Sign in failed: "+e.message+". Make sure Discord is enabled in your Supabase Auth settings.");
+    alert("Sign in failed: "+e.message);
   }
 }
 
@@ -829,6 +854,6 @@ fetch(CSV_URL).then(r=>r.text()).then(text=>{
   document.getElementById("v-tbody").innerHTML=`<tr><td colspan="5" class="err-msg">⚠️ Could not load data.</td></tr>`;
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="initAuth()" onerror="console.error('Supabase failed to load')"></script>
+
 </body>
 </html>
