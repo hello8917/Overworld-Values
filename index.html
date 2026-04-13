@@ -482,8 +482,21 @@ function renderAuthBar(user){
 }
 
 async function signInWithDiscord(){
+  // Make sure supabase is ready — initialize if not yet done
+  if(!supabase){
+    if(!initSupabase()){
+      alert("Auth is still loading, please try again in a second.");
+      return;
+    }
+  }
   const redirectTo=window.location.href.split("?")[0].split("#")[0];
-  await supabase.auth.signInWithOAuth({provider:"discord",options:{redirectTo}});
+  try{
+    const {error}=await supabase.auth.signInWithOAuth({provider:"discord",options:{redirectTo}});
+    if(error) throw error;
+  }catch(e){
+    console.error("Sign in error:",e);
+    alert("Sign in failed: "+e.message+". Make sure Discord is enabled in your Supabase Auth settings.");
+  }
 }
 
 async function signOut(){
