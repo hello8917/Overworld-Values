@@ -9,11 +9,19 @@
 <script>
 // Load Supabase dynamically, then init auth
 window.addEventListener("DOMContentLoaded",function(){
-  var s=document.createElement("script");
-  s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
-  s.onload=function(){ initAuth(); };
-  s.onerror=function(){ console.error("Supabase failed"); };
-  document.head.appendChild(s);
+  function tryLoad(urls, idx){
+    if(idx>=urls.length){ console.error("All Supabase CDNs failed"); return; }
+    var s=document.createElement("script");
+    s.src=urls[idx];
+    s.onload=function(){ console.log("Supabase loaded from",urls[idx]); initAuth(); };
+    s.onerror=function(){ console.warn("Failed:",urls[idx]); tryLoad(urls,idx+1); };
+    document.head.appendChild(s);
+  }
+  tryLoad([
+    "https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js",
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.39.3/umd/supabase.min.js"
+  ], 0);
 });
 </script>
 
