@@ -338,6 +338,46 @@ tr:hover td { background: var(--bg3); }
   .nav-btn .nav-icon { display: none; }
   .nav-btn { font-size: 9px; padding: 10px 4px; }
 }
+
+/* MAKE FAIR / DEMAND ANALYSIS */
+.demand-analysis { margin: 8px 0; padding: 8px 12px; border-radius: 8px; font-size: 12px; display:none; }
+.demand-analysis.warning { background: rgba(224,80,48,0.1); border: 1px solid rgba(224,80,48,0.3); color: #e87060; }
+.demand-analysis.info { background: rgba(240,192,64,0.08); border: 1px solid rgba(240,192,64,0.2); color: var(--gold-dim); }
+.demand-analysis.good { background: rgba(128,192,64,0.1); border: 1px solid rgba(128,192,64,0.3); color: var(--green); }
+.make-fair-btn { flex:1; padding:9px; background:rgba(128,192,64,0.1); border:1px solid rgba(128,192,64,0.3); border-radius:8px; color:var(--green); font-family:"Cinzel",serif; font-size:12px; letter-spacing:0.06em; cursor:pointer; transition:all 0.2s; text-align:center; }
+.make-fair-btn:hover { background:rgba(128,192,64,0.2); border-color:var(--green); }
+.make-fair-btn:disabled { opacity:0.4; cursor:not-allowed; }
+/* MULTI-ADD */
+.multi-add-row { display:flex; gap:6px; align-items:center; }
+.multi-add-qty { width:56px; background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:7px 8px; color:var(--gold); font-family:"Cinzel",serif; font-size:13px; outline:none; text-align:center; flex-shrink:0; }
+.multi-add-qty:focus { border-color:var(--gold); }
+.multi-add-input { flex:1; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 14px; color:var(--text); font-family:"Lato",sans-serif; font-size:14px; outline:none; transition:border-color 0.2s; }
+.multi-add-input:focus { border-color:var(--gold); }
+.multi-add-input::placeholder { color:var(--text-dim); }
+/* COPY RESULT */
+.copy-result-btn { flex:1; padding:9px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; color:var(--text-dim); font-family:"Cinzel",serif; font-size:12px; letter-spacing:0.06em; cursor:pointer; transition:all 0.2s; text-align:center; }
+.copy-result-btn:hover { border-color:var(--gold); color:var(--gold); }
+.copy-result-btn.copied { border-color:var(--green); color:var(--green); }
+/* FAIR SUGGESTION OVERLAY */
+.fair-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; align-items:center; justify-content:center; }
+.fair-overlay.open { display:flex; }
+.fair-card { background:#1a1208; border:2px solid var(--gold-dark); border-radius:12px; padding:24px; width:min(500px,92vw); max-height:85vh; overflow-y:auto; }
+.fair-title { font-family:"Cinzel",serif; color:var(--gold); font-size:16px; text-align:center; margin-bottom:6px; letter-spacing:0.08em; }
+.fair-sub { font-size:12px; color:var(--text-dim); text-align:center; margin-bottom:16px; }
+.fair-section { margin-bottom:14px; }
+.fair-section-label { font-family:"Cinzel",serif; font-size:11px; color:var(--gold-dim); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px; }
+.fair-item { display:flex; align-items:center; gap:8px; padding:7px 10px; background:var(--bg3); border-radius:6px; margin-bottom:5px; font-size:13px; }
+.fair-item img { width:28px; height:28px; border-radius:4px; object-fit:cover; border:1px solid var(--border); }
+.fair-item-ph { width:28px; height:28px; border-radius:4px; border:1px solid var(--border); background:var(--bg2); display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--text-dim); }
+.fair-item-name { flex:1; }
+.fair-item-val { color:var(--gold); font-family:"Cinzel",serif; font-size:12px; }
+.fair-diff { text-align:center; padding:10px; background:var(--bg3); border-radius:8px; margin-bottom:14px; font-size:13px; color:var(--text-dim); }
+.fair-diff strong { color:var(--gold); font-family:"Cinzel",serif; }
+.fair-actions { display:flex; gap:8px; }
+.fair-btn { flex:1; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg3); color:var(--gold-dim); font-family:"Cinzel",serif; font-size:12px; cursor:pointer; transition:all 0.2s; text-align:center; }
+.fair-btn:hover { border-color:var(--gold); color:var(--gold); }
+.fair-btn.primary { background:var(--gold-dark); border-color:var(--gold); color:var(--gold); }
+.fair-btn.primary:hover { background:#8a6c2a; }
 </style>
 </head>
 <body>
@@ -450,7 +490,10 @@ tr:hover td { background: var(--bg3); }
         </div>
       </div>
       <div class="add-area">
-        <input type="text" id="search-you" placeholder="Add item to your offer..." oninput="onSearch('you')" onfocus="openDrop('you')" autocomplete="off">
+        <div class="multi-add-row">
+          <input type="number" class="multi-add-qty" id="qty-you" value="1" min="1" title="Quantity">
+          <input type="text" class="multi-add-input" id="search-you" placeholder="Add item to your offer..." oninput="onSearch('you')" onfocus="openDrop('you')" autocomplete="off">
+        </div>
         <div class="dropdown" id="drop-you"></div>
       </div>
       <div class="items-list" id="items-you"></div>
@@ -464,7 +507,10 @@ tr:hover td { background: var(--bg3); }
         </div>
       </div>
       <div class="add-area">
-        <input type="text" id="search-them" placeholder="Add item to their offer..." oninput="onSearch('them')" onfocus="openDrop('them')" autocomplete="off">
+        <div class="multi-add-row">
+          <input type="number" class="multi-add-qty" id="qty-them" value="1" min="1" title="Quantity">
+          <input type="text" class="multi-add-input" id="search-them" placeholder="Add item to their offer..." oninput="onSearch('them')" onfocus="openDrop('them')" autocomplete="off">
+        </div>
         <div class="dropdown" id="drop-them"></div>
       </div>
       <div class="items-list" id="items-them"></div>
@@ -477,9 +523,12 @@ tr:hover td { background: var(--bg3); }
     </div>
     <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:50%"></div></div>
     <div class="verdict even" id="verdict">Add items to compare</div>
-    <div class="result-btns">
+    <div class="demand-analysis" id="demand-analysis"></div>
+    <div class="result-btns" style="flex-wrap:wrap;gap:6px">
+      <button class="make-fair-btn" id="make-fair-btn" onclick="makeFair()" disabled>⚖️ Make Fair</button>
+      <button class="copy-result-btn" id="copy-result-btn" onclick="copyResult()">📋 Copy Result</button>
       <button class="screenshot-btn" onclick="openScreenshot()">📸 Screenshot</button>
-      <button class="post-trade-btn" onclick="openPostTrade()">📣 Post to Trade Board</button>
+      <button class="post-trade-btn" onclick="openPostTrade()">📣 Post to Board</button>
     </div>
   </div>
 </div>
@@ -540,6 +589,27 @@ tr:hover td { background: var(--bg3); }
     <div class="profile-trades-title">📋 All Trade Listings</div>
     <div class="profile-trades-list" id="profile-trades-list">
       <div class="profile-no-trades">Loading trades...</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAKE FAIR OVERLAY -->
+<div class="fair-overlay" id="fair-overlay" onclick="if(event.target===this)document.getElementById('fair-overlay').classList.remove('open')">
+  <div class="fair-card">
+    <div class="fair-title">⚖️ Make This Fair</div>
+    <div class="fair-sub" id="fair-sub"></div>
+    <div class="fair-diff" id="fair-diff"></div>
+    <div class="fair-section" id="fair-add-section" style="display:none">
+      <div class="fair-section-label" id="fair-add-label">Suggested items to add</div>
+      <div id="fair-add-list"></div>
+    </div>
+    <div class="fair-section" id="fair-remove-section" style="display:none">
+      <div class="fair-section-label" id="fair-remove-label">Suggested items to remove</div>
+      <div id="fair-remove-list"></div>
+    </div>
+    <div class="fair-actions">
+      <button class="fair-btn primary" onclick="applyFairSuggestion()">Apply Suggestion</button>
+      <button class="fair-btn" onclick="document.getElementById('fair-overlay').classList.remove('open')">Cancel</button>
     </div>
   </div>
 </div>
@@ -872,9 +942,12 @@ function onSearch(side){
 }
 function openDrop(side){if(document.getElementById(`search-${side}`).value)onSearch(side);}
 function addItem(side,idx){
-  const item={...allItems[idx],qty:1};
+  const qtyEl=document.getElementById(`qty-${side}`);
+  const qty=Math.max(1,parseInt(qtyEl?.value||"1")||1);
+  const item={...allItems[idx],qty};
   if(side==='you')yourItems.push(item);else theirItems.push(item);
   document.getElementById(`search-${side}`).value="";
+  if(qtyEl)qtyEl.value="1";
   document.getElementById(`drop-${side}`).classList.remove("open");
   renderSide(side);updateResult();
 }
@@ -912,6 +985,54 @@ function updateResult(){
   if(Math.abs(diff)<Math.max(you,them)*0.05){verdict.textContent="Fair trade ✓";verdict.className="verdict even";}
   else if(diff>0){verdict.textContent=`You're overpaying by ${Math.abs(diff).toLocaleString()} (${pct}%)`;verdict.className="verdict lose";}
   else{verdict.textContent=`You're winning by ${Math.abs(diff).toLocaleString()} (${pct}%)`;verdict.className="verdict win";}
+
+  // Enable make fair button if there are items
+  const mfBtn=document.getElementById("make-fair-btn");
+  if(mfBtn) mfBtn.disabled=(!yourItems.length&&!theirItems.length);
+
+  // Demand analysis
+  analyzeDemand(you,them);
+}
+
+function analyzeDemand(you,them){
+  const el=document.getElementById("demand-analysis");
+  if(!el||(!yourItems.length&&!theirItems.length)){if(el)el.style.display="none";return;}
+
+  const dScore={High:3,Medium:2,Low:1,undefined:2};
+  const yourAvgD=yourItems.length?yourItems.reduce((s,i)=>s+(dScore[i.demand]||2),0)/yourItems.length:2;
+  const theirAvgD=theirItems.length?theirItems.reduce((s,i)=>s+(dScore[i.demand]||2),0)/theirItems.length:2;
+  const dLabel={3:"High",2:"Medium",1:"Low"};
+  const yourDLabel=dLabel[Math.round(yourAvgD)]||"Medium";
+  const theirDLabel=dLabel[Math.round(theirAvgD)]||"Medium";
+
+  const you2=you||0, them2=them||0;
+  const diff=you2-them2;
+  const fairRange=Math.max(you2,them2)*0.05;
+  const isFair=Math.abs(diff)<=fairRange;
+
+  let msg="", cls="info";
+
+  if(yourItems.length&&theirItems.length){
+    if(yourAvgD>theirAvgD+0.5&&!isFair&&diff>=0){
+      msg=`⚠️ You're giving <strong>${yourDLabel} demand</strong> items for <strong>${theirDLabel} demand</strong> items — even if values match, this may be a bad trade.`;
+      cls="warning";
+    } else if(yourAvgD>theirAvgD+0.5&&isFair){
+      msg=`ℹ️ You're giving <strong>${yourDLabel} demand</strong> for <strong>${theirDLabel} demand</strong>. Values are close but demand matters — consider asking for more.`;
+      cls="warning";
+    } else if(theirAvgD>yourAvgD+0.5&&isFair){
+      msg=`✓ You're getting <strong>${theirDLabel} demand</strong> items for <strong>${yourDLabel} demand</strong> — good deal even at equal value!`;
+      cls="good";
+    } else if(isFair){
+      msg=`✓ Fair trade — both sides have similar value and demand.`;
+      cls="good";
+    } else if(diff>0){
+      msg=`You're overpaying. Their items are <strong>${theirDLabel} demand</strong>, yours are <strong>${yourDLabel} demand</strong>.`;
+      cls="warning";
+    }
+  }
+
+  if(msg){ el.style.display="block"; el.innerHTML=msg; el.className="demand-analysis "+cls; }
+  else { el.style.display="none"; }
 }
 
 function openScreenshot(){
@@ -1089,6 +1210,115 @@ fetch(CSV_URL).then(r=>r.text()).then(text=>{
   document.getElementById("v-tbody").innerHTML=`<tr><td colspan="5" class="err-msg">⚠️ Could not load data.</td></tr>`;
 });
 
+
+// ---- MAKE FAIR ----
+let fairSuggestion = null;
+
+function makeFair(){
+  const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const diff=you-them;
+  fairSuggestion=null;
+
+  document.getElementById("fair-sub").textContent = diff>0
+    ? `You're offering ${Math.abs(diff).toLocaleString()} more than them.`
+    : `They're offering ${Math.abs(diff).toLocaleString()} more than you.`;
+
+  document.getElementById("fair-diff").innerHTML =
+    `Your side: <strong>${you.toLocaleString()}</strong> &nbsp;|&nbsp; Their side: <strong>${them.toLocaleString()}</strong><br>Difference: <strong>${Math.abs(diff).toLocaleString()}</strong>`;
+
+  const addSection=document.getElementById("fair-add-section");
+  const removeSection=document.getElementById("fair-remove-section");
+  const addList=document.getElementById("fair-add-list");
+  const removeList=document.getElementById("fair-remove-list");
+  addSection.style.display="none";
+  removeSection.style.display="none";
+  addList.innerHTML="";
+  removeList.innerHTML="";
+
+  const gap=Math.abs(diff);
+  if(gap===0){
+    document.getElementById("fair-sub").textContent="This trade is already fair!";
+    document.getElementById("fair-overlay").classList.add("open");
+    return;
+  }
+
+  // Side that needs to add more is the LOWER side
+  const lowerSide=diff>0?"them":"you"; // if you>them, THEY need to add
+  const higherSide=diff>0?"you":"them";
+
+  // Find best item(s) to suggest adding to the lower side
+  const sorted=[...allItems].sort((a,b)=>Math.abs(a.value-gap)-Math.abs(b.value-gap));
+  let suggestions=[];
+  let remaining=gap;
+
+  // Try to find items that get close to the gap
+  for(const item of sorted){
+    if(item.value===0) continue;
+    if(item.value<=remaining*1.3 && item.value>=remaining*0.1){
+      const qty=Math.max(1,Math.round(remaining/item.value));
+      const total=item.value*qty;
+      suggestions.push({...item,qty,total});
+      remaining-=total;
+      if(Math.abs(remaining)<gap*0.05) break;
+      if(suggestions.length>=3) break;
+    }
+  }
+
+  fairSuggestion={lowerSide,higherSide,suggestions,gap};
+
+  if(suggestions.length){
+    document.getElementById("fair-add-label").textContent =
+      `${lowerSide==="you"?"You":"They"} should add (to balance ${gap.toLocaleString()}):`;
+    addList.innerHTML=suggestions.map(i=>`
+      <div class="fair-item">
+        ${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\'fair-item-ph\'>?</div>'">`:`<div class="fair-item-ph">?</div>`}
+        <span class="fair-item-name">${i.qty>1?`${i.qty}× `:""} ${i.name}</span>
+        <span class="fair-item-val">${i.total.toLocaleString()}</span>
+      </div>`).join("");
+    addSection.style.display="block";
+  } else {
+    addList.innerHTML=`<div style="color:var(--text-dim);font-size:13px">No single item matches — try manually adjusting quantities.</div>`;
+    addSection.style.display="block";
+  }
+
+  document.getElementById("fair-overlay").classList.add("open");
+}
+
+function applyFairSuggestion(){
+  if(!fairSuggestion||!fairSuggestion.suggestions.length){ document.getElementById("fair-overlay").classList.remove("open"); return; }
+  const side=fairSuggestion.lowerSide;
+  fairSuggestion.suggestions.forEach(item=>{
+    if(side==='you') yourItems.push({...item});
+    else theirItems.push({...item});
+  });
+  renderSide(side); updateResult();
+  document.getElementById("fair-overlay").classList.remove("open");
+}
+
+// ---- COPY RESULT ----
+function copyResult(){
+  const you=yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const them=theirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const diff=you-them;
+  const pct=them>0?Math.round((Math.abs(diff)/them)*100):100;
+  let verdict="";
+  if(!you&&!them) verdict="No items added";
+  else if(Math.abs(diff)<Math.max(you,them)*0.05) verdict="Fair trade ✓";
+  else if(diff>0) verdict=`Overpaying by ${Math.abs(diff).toLocaleString()} (${pct}%)`;
+  else verdict=`Winning by ${Math.abs(diff).toLocaleString()} (${pct}%)`;
+
+  const yL=yourItems.map(i=>`  ${i.qty>1?i.qty+"x ":""}${i.name} — ${(i.value*(i.qty||1)).toLocaleString()}`).join("\n")||"  (none)";
+  const tL=theirItems.map(i=>`  ${i.qty>1?i.qty+"x ":""}${i.name} — ${(i.value*(i.qty||1)).toLocaleString()}`).join("\n")||"  (none)";
+  const text=`⚖️ Overworld Trade Check\n\nYour offer (${you.toLocaleString()}):\n${yL}\n\nTheir offer (${them.toLocaleString()}):\n${tL}\n\nVerdict: ${verdict}\n— Overworld Values`;
+
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById("copy-result-btn");
+    btn.textContent="✓ Copied!"; btn.classList.add("copied");
+    setTimeout(()=>{ btn.textContent="📋 Copy Result"; btn.classList.remove("copied"); },2000);
+  });
+}
+
 // Init auth immediately — no external library needed
 initAuth();
 
@@ -1255,4 +1485,3 @@ function goBackFromProfile(){
 
 </body>
 </html>
-
