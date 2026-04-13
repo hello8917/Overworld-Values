@@ -6,24 +6,7 @@
 <title>Overworld Values</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-<script>
-// Load Supabase dynamically, then init auth
-window.addEventListener("DOMContentLoaded",function(){
-  function tryLoad(urls, idx){
-    if(idx>=urls.length){ console.error("All Supabase CDNs failed"); return; }
-    var s=document.createElement("script");
-    s.src=urls[idx];
-    s.onload=function(){ console.log("Supabase loaded from",urls[idx]); initAuth(); };
-    s.onerror=function(){ console.warn("Failed:",urls[idx]); tryLoad(urls,idx+1); };
-    document.head.appendChild(s);
-  }
-  tryLoad([
-    "https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js",
-    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.39.3/umd/supabase.min.js"
-  ], 0);
-});
-</script>
+
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -457,33 +440,104 @@ let allItems=[],yourItems=[],theirItems=[],allTrades=[];
 let sortCol="value",sortDir="desc",selectedCats=new Set();
 let currentUser=null, currentProfile=null;
 
-// ---- SUPABASE CLIENT ----
-let supabase;
-function initSupabase(){
-  if(window.supabase) supabase=window.supabase.createClient(SB_URL,SB_KEY);
-  else { console.error("Supabase not loaded"); return false; }
-  return true;
+// ---- SUPABASE REST CLIENT (no external library needed) ----
+let supabase = true; // flag that auth is ready
+
+function sbHeaders(extra={}){
+  return {"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json",...extra};
 }
+
+function initSupabase(){ return true; } // always ready
+
+// Minimal auth — uses Supabase implicit OAuth flow
+const SB_AUTH = {
+  async signInWithOAuth({provider, options}){
+    const redirectTo = options?.redirectTo || window.location.href;
+    const url = `${SB_URL}/auth/v1/authorize?provider=${provider}&redirect_to=${encodeURIComponent(redirectTo)}`;
+    window.location.href = url;
+    return {};
+  },
+  async getSession(){
+    // Check URL hash for access_token (after OAuth redirect)
+    const hash = window.location.hash;
+    if(hash && hash.includes("access_token")){
+      const params = new URLSearchParams(hash.replace("#","?").slice(1));
+      const access_token = params.get("access_token");
+      const refresh_token = params.get("refresh_token");
+      if(access_token){
+        sessionStorage.setItem("sb_access_token", access_token);
+        if(refresh_token) sessionStorage.setItem("sb_refresh_token", refresh_token);
+        // Clean hash from URL
+        history.replaceState(null,"",window.location.pathname+window.location.search);
+      }
+    }
+    const token = sessionStorage.getItem("sb_access_token");
+    if(!token) return {data:{session:null}};
+    // Get user from token
+    try{
+      const res = await fetch(`${SB_URL}/auth/v1/user`,{headers:{...sbHeaders(),"Authorization":"Bearer "+token}});
+      if(!res.ok){ sessionStorage.removeItem("sb_access_token"); return {data:{session:null}}; }
+      const user = await res.json();
+      return {data:{session:{user, access_token:token}}};
+    }catch(e){ return {data:{session:null}}; }
+  },
+  async signOut(){
+    const token = sessionStorage.getItem("sb_access_token");
+    if(token) await fetch(`${SB_URL}/auth/v1/logout`,{method:"POST",headers:{...sbHeaders(),"Authorization":"Bearer "+token}}).catch(()=>{});
+    sessionStorage.removeItem("sb_access_token");
+    sessionStorage.removeItem("sb_refresh_token");
+  },
+  onAuthStateChange(cb){ /* handled manually */ }
+};
+
+// Supabase DB helper
+const sbDB = {
+  async select(table, filter=""){
+    const res = await fetch(`${SB_URL}/rest/v1/${table}?${filter}`,{headers:sbHeaders()});
+    return res.json();
+  },
+  async upsert(table, data){
+    const res = await fetch(`${SB_URL}/rest/v1/${table}`,{
+      method:"POST",
+      headers:{...sbHeaders(),"Prefer":"resolution=merge-duplicates,return=representation"},
+      body:JSON.stringify(data)
+    });
+    if(!res.ok){ const e=await res.text(); return{error:e}; }
+    return{data:await res.json()};
+  },
+  async insert(table, data){
+    const res = await fetch(`${SB_URL}/rest/v1/${table}`,{
+      method:"POST",
+      headers:{...sbHeaders(),"Prefer":"return=representation"},
+      body:JSON.stringify(data)
+    });
+    if(!res.ok){ const e=await res.text(); return{error:e}; }
+    return{data:await res.json()};
+  },
+  async delete(table, filter){
+    const token = sessionStorage.getItem("sb_access_token");
+    const authHeader = token ? {"Authorization":"Bearer "+token} : {};
+    const res = await fetch(`${SB_URL}/rest/v1/${table}?${filter}`,{
+      method:"DELETE",
+      headers:{...sbHeaders(),...authHeader}
+    });
+    return{ok:res.ok};
+  }
+};
 
 // ---- AUTH ----
 async function initAuth(){
-  if(!initSupabase()) return;
-  const {data:{session}}=await supabase.auth.getSession();
+  const {data:{session}}=await SB_AUTH.getSession();
   if(session) await onSignedIn(session.user);
   else renderAuthBar(null);
-
-  supabase.auth.onAuthStateChange(async(_,session)=>{
-    if(session) await onSignedIn(session.user);
-    else{ currentUser=null; currentProfile=null; renderAuthBar(null); }
-  });
 }
 
 async function onSignedIn(user){
   currentUser=user;
-  const {data:profile}=await supabase.from("profiles").select("*").eq("id",user.id).single();
-  currentProfile=profile;
+  const profiles=await sbDB.select("profiles",`id=eq.${user.id}`);
+  currentProfile=(Array.isArray(profiles)&&profiles[0])||null;
   renderAuthBar(user);
-  if(!profile||!profile.roblox_username) openProfileSetup(user);
+  if(!currentProfile||!currentProfile.roblox_username) openProfileSetup(user);
 }
 
 function renderAuthBar(user){
@@ -500,40 +554,14 @@ function renderAuthBar(user){
 }
 
 async function signInWithDiscord(){
-  if(!supabase){
-    // Supabase not ready yet — try initializing
-    if(!initSupabase()){
-      // Still not ready, wait up to 5 seconds
-      let attempts=0;
-      const wait=setInterval(()=>{
-        attempts++;
-        if(window.supabase&&initSupabase()){
-          clearInterval(wait);
-          doSignIn();
-        } else if(attempts>10){
-          clearInterval(wait);
-          alert("Could not connect to auth service. Please refresh the page and try again.");
-        }
-      },500);
-      return;
-    }
-  }
-  doSignIn();
-}
-
-async function doSignIn(){
   const redirectTo=window.location.href.split("?")[0].split("#")[0];
-  try{
-    const {error}=await supabase.auth.signInWithOAuth({provider:"discord",options:{redirectTo}});
-    if(error) throw error;
-  }catch(e){
-    console.error("Sign in error:",e);
-    alert("Sign in failed: "+e.message);
-  }
+  await SB_AUTH.signInWithOAuth({provider:"discord",options:{redirectTo}});
 }
 
 async function signOut(){
-  await supabase.auth.signOut();
+  await SB_AUTH.signOut();
+  currentUser=null; currentProfile=null;
+  renderAuthBar(null);
   document.getElementById("board-lock").style.display="flex";
   document.getElementById("board-content").style.display="none";
 }
@@ -551,7 +579,7 @@ async function saveProfile(){
   if(!roblox){alert("Please enter your Roblox username!");return;}
   const btn=document.getElementById("profile-save-btn");
   btn.disabled=true;btn.textContent="Saving...";
-  const{error}=await supabase.from("profiles").upsert({id:currentUser.id,roblox_username:roblox,discord_username:(currentUser.user_metadata?.full_name||currentUser.email||"")});
+  const{error}=await sbDB.upsert("profiles",{id:currentUser.id,roblox_username:roblox,discord_username:(currentUser.user_metadata?.full_name||currentUser.email||currentUser.id||"")});
   if(error){alert("Could not save profile. Try again.");btn.disabled=false;btn.textContent="Save & Continue";return;}
   currentProfile={...currentProfile,roblox_username:roblox};
   renderAuthBar(currentUser);
@@ -758,13 +786,8 @@ async function submitTrade(){
   const wanting=theirItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
   const delete_token=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+Date.now().toString(36);
   try{
-    const res=await fetch(`${SB_URL}/rest/v1/trades`,{
-      method:"POST",
-      headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`,"Prefer":"return=representation"},
-      body:JSON.stringify({username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null,delete_token})
-    });
-    if(!res.ok)throw new Error();
-    const data=await res.json();
+    const {data,error}=await sbDB.insert("trades",{username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null,delete_token});
+    if(error)throw new Error(error);
     if(data&&data[0]&&data[0].id)saveToken(data[0].id,delete_token);
     closePT();
     document.getElementById("pt-username").value="";
@@ -835,7 +858,7 @@ async function deleteTrade(id,btn){
   if(!confirm("Delete your trade listing?"))return;
   btn.disabled=true;
   try{
-    await fetch(`${SB_URL}/rest/v1/trades?id=eq.${id}&delete_token=eq.${tokens[id]}`,{method:"DELETE",headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`}});
+    await sbDB.delete("trades",`id=eq.${id}&delete_token=eq.${tokens[id]}`);
     allTrades=allTrades.filter(t=>t.id!==id);filterBoard();
   }catch(e){alert("Could not delete. Try again.");btn.disabled=false;}
 }
@@ -861,6 +884,9 @@ fetch(CSV_URL).then(r=>r.text()).then(text=>{
 }).catch(()=>{
   document.getElementById("v-tbody").innerHTML=`<tr><td colspan="5" class="err-msg">⚠️ Could not load data.</td></tr>`;
 });
+
+// Init auth immediately — no external library needed
+initAuth();
 </script>
 
 </body>
