@@ -213,7 +213,9 @@ tr:hover td { background: var(--bg3); }
 }
 
 /* AUTH */
-.auth-bar { background: var(--bg4); border-bottom: 1px solid var(--border); padding: 8px 20px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; flex-shrink: 0; font-size: 13px; min-height: 42px; }
+.auth-bar { background: var(--bg4); border-bottom: 1px solid var(--border); padding: 6px 20px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-shrink: 0; font-size: 13px; min-height: 38px; }
+.auth-bar-left { display:flex; align-items:center; gap:8px; color:var(--text-dim); font-size:12px; letter-spacing:0.04em; }
+.auth-bar-right { display:flex; align-items:center; gap:8px; }
 .auth-user { display: flex; align-items: center; gap: 8px; color: var(--text-dim); }
 .auth-avatar { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); }
 .auth-username { color: var(--text); font-weight: 700; font-size: 13px; }
@@ -753,6 +755,26 @@ textarea.feedback-input { min-height:100px; resize:vertical; }
   </div>
 </div>
 
+<!-- EDIT TRADE OVERLAY -->
+<div class="pt-overlay" id="edit-overlay" onclick="if(event.target===this)closeEditOverlay()">
+  <div class="pt-card">
+    <div class="pt-title">✏️ Edit Your Trade</div>
+    <input type="hidden" id="edit-trade-id">
+    <div class="pt-field">
+      <label class="pt-label">Description</label>
+      <input type="text" class="pt-input" id="edit-desc" placeholder="Update your description..." maxlength="120">
+    </div>
+    <div class="pt-field">
+      <label class="pt-label">Preview</label>
+      <div class="pt-preview" id="edit-preview"></div>
+    </div>
+    <div class="pt-actions">
+      <button class="pt-btn primary" id="edit-save-btn" onclick="saveEditTrade()">Save Changes</button>
+      <button class="pt-btn" onclick="closeEditOverlay()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- OFFER VIEW OVERLAY -->
 <div class="offer-overlay" id="offer-overlay" onclick="if(event.target===this)closeOfferOverlay()">
   <div class="offer-card">
@@ -899,7 +921,9 @@ async function onSignedIn(user){
 function renderAuthBar(user){
   const bar=document.getElementById("auth-bar");
   if(!user){
-    bar.innerHTML=`<button class="auth-btn" onclick="signInWithDiscord()"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963a.074.074 0 0 0-.041-.104 13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>Sign in with Discord</button>`;
+    bar.innerHTML=`
+      <div class="auth-bar-left"><span>👥 <span id="ab-item-count">—</span> items listed</span></div>
+      <div class="auth-bar-right"><button class="auth-btn" onclick="signInWithDiscord()"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963a.074.074 0 0 0-.041-.104 13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>Sign in with Discord</button></div>`;
     return;
   }
   const meta=user.user_metadata||{};
@@ -909,6 +933,12 @@ function renderAuthBar(user){
   const trusted=currentProfile?.follower_count>=10?`<span class="badge-trusted">✓ Trusted</span>`:"";
   const clickName=currentProfile?.roblox_username?`onclick="openProfile('${currentProfile.roblox_username}')" style="cursor:pointer"`:"";
   bar.innerHTML=`
+    <div class="auth-bar-left">
+      <span>📋 <span id="ab-item-count">${allItems.length||"—"}</span> items</span>
+      <span style="color:var(--border)">|</span>
+      <span>📣 <span id="ab-trade-count">—</span> active trades</span>
+    </div>
+    <div class="auth-bar-right">
     <div class="notif-wrap">
       <button class="notif-bell" onclick="toggleNotifDropdown()" title="Notifications">🔔</button>
       <div class="notif-dot" id="notif-dot"></div>
@@ -918,8 +948,11 @@ function renderAuthBar(user){
       </div>
     </div>
     <div class="auth-user">${avatar}<div><span class="auth-username" ${clickName}>${dname}</span> ${trusted}${rname?` · ${rname}`:""}</div></div>
-    <button class="auth-btn signout" onclick="signOut()">Sign out</button>`;
+    <button class="auth-btn signout" onclick="signOut()">Sign out</button>
+    </div></div>`;
   loadNotifications();
+  // update trade count
+  sbDB.select("trades","created_at=gte."+new Date(Date.now()-86400000).toISOString()).then(r=>{ if(Array.isArray(r)){ const el=document.getElementById("ab-trade-count"); if(el)el.textContent=r.length; }}).catch(()=>{});
 }
 
 async function signInWithDiscord(){
@@ -1054,10 +1087,10 @@ function renderValues(){
   });
   document.getElementById("v-count").textContent=list.length;
   const tb=document.getElementById("v-tbody");
-  if(!list.length){tb.innerHTML=`<tr><td colspan="7" class="empty">No items match.</td></tr>`;return;}
+  if(!list.length){tb.innerHTML=`<tr><td colspan="5" class="empty">No items match.</td></tr>`;return;}
   tb.innerHTML=list.map(i=>{
     const d=(i.demand||"").toLowerCase();
-    return`<tr><td>${i.image?`<img class="item-img" src="${i.image}" alt="${i.name}" loading="lazy" onerror="this.outerHTML='<div class=\\'img-ph\\'>?</div>'">`:`<div class="img-ph">?</div>`}</td><td><span class="item-name">${i.name}</span></td><td>${i.category?`<span class="cat">${i.category}</span>`:""}</td><td><span class="val">${i.value.toLocaleString()}</span></td><td style="font-size:12px;color:#6dbf6d">${i.min?i.min.toLocaleString():"—"}</td><td style="font-size:12px;color:#e87060">${i.max?i.max.toLocaleString():"—"}</td><td>${i.demand?`<span class="badge ${d}">${i.demand}</span>`:""}</td></tr>`;
+    return`<tr><td>${i.image?`<img class="item-img" src="${i.image}" alt="${i.name}" loading="lazy" onerror="this.outerHTML='<div class=\\'img-ph\\'>?</div>'">`:`<div class="img-ph">?</div>`}</td><td><span class="item-name">${i.name}</span></td><td>${i.category?`<span class="cat">${i.category}</span>`:""}</td><td><div style="display:flex;align-items:center;gap:5px">${i.min?`<span style="color:#6dbf6d;font-size:11px">${i.min.toLocaleString()}</span>`:""}<span class="val">${i.value.toLocaleString()}</span>${i.max?`<span style="color:#e87060;font-size:11px">${i.max.toLocaleString()}</span>`:""}</div></td><td>${i.demand?`<span class="badge ${d}">${i.demand}</span>`:""}</td></tr>`;
   }).join("");
 }
 
@@ -1224,14 +1257,23 @@ async function submitTrade(){
   const wanting=theirItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
   const delete_token=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+Date.now().toString(36);
   try{
-    const {data,error}=await sbDB.insert("trades",{username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null,delete_token});
-    if(error){ console.warn("Insert warning:",error); }
-    if(data&&data[0]&&data[0].id) saveToken(data[0].id,delete_token);
+    let tradeData=null;
+    try{
+      const res2=await fetch(`${SB_URL}/rest/v1/trades`,{
+        method:"POST",
+        headers:{...sbHeaders(),"Prefer":"return=representation"},
+        body:JSON.stringify({username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null,delete_token})
+      });
+      if(res2.status===201||res2.status===200){
+        tradeData=await res2.json();
+      }
+    }catch(e){ console.warn("trade insert:", e); }
+    if(tradeData&&tradeData[0]&&tradeData[0].id) saveToken(tradeData[0].id,delete_token);
     closePT();
     document.getElementById("pt-username").value="";
     document.getElementById("pt-desc").value="";
     showPage("board");loadBoard();
-  }catch(e){alert("Failed to post. Please try again.");}
+  }catch(e){ console.warn("Post trade error:",e); }
   btn.disabled=false;btn.textContent="Post Trade";
 }
 
@@ -1309,7 +1351,7 @@ function filterBoard(){
         <div class="tb-meta">
           <span class="tb-expires">expires ${expiresIn(t.created_at)}</span>
           ${currentUser&&currentProfile?.roblox_username!==t.username?`<button class="tb-offer-btn" onclick="startOffer('${t.id}','${t.username}',${JSON.stringify(t.wanting).replace(/"/g,"'")})">Make Offer</button>`:""}
-          ${isMine(t.id)?`<button class="tb-delete" onclick="deleteTrade('${t.id}',this)" title="Delete your listing">🗑️</button>`:""}
+          ${isMine(t.id)?`<button class="tb-offer-btn" style="margin-right:4px" onclick="editTrade('${t.id}',${JSON.stringify(t).replace(/`/g,"'")})">✏️ Edit</button><button class="tb-delete" onclick="deleteTrade('${t.id}',this)" title="Delete your listing">🗑️</button>`:""}
         </div>
       </div>
       <div class="tb-sides">
@@ -1354,6 +1396,7 @@ document.addEventListener("click",e=>{
 
 fetch(CSV_URL).then(r=>r.text()).then(text=>{
   allItems=parseCSV(text);populateCats();renderValues();renderSide("you");renderSide("them");
+  document.querySelectorAll("#ab-item-count").forEach(el=>el.textContent=allItems.length);
 }).catch(()=>{
   document.getElementById("v-tbody").innerHTML=`<tr><td colspan="5" class="err-msg">⚠️ Could not load data.</td></tr>`;
 });
@@ -1673,6 +1716,43 @@ async function submitFeedback(){
     setTimeout(()=>{ document.getElementById("feedback-success").style.display="none"; },4000);
   } catch(e){ alert("Failed to submit. Please try again."); }
   btn.disabled = false; btn.textContent = "Send Feedback";
+}
+
+
+// ---- EDIT TRADE ----
+function editTrade(id, tradeData){
+  document.getElementById("edit-trade-id").value = id;
+  document.getElementById("edit-desc").value = tradeData.description||"";
+  const yN=(tradeData.offering||[]).map(i=>(i.qty>1?`${i.qty}x `:"")+i.name).join(", ")||"Nothing";
+  const tN=(tradeData.wanting||[]).map(i=>(i.qty>1?`${i.qty}x `:"")+i.name).join(", ")||"Nothing";
+  document.getElementById("edit-preview").innerHTML=`
+    <div class="pt-preview-row"><span class="pt-preview-label">Offering:</span><span>${yN}</span></div>
+    <div class="pt-preview-row"><span class="pt-preview-label">Wanting:</span><span>${tN}</span></div>`;
+  document.getElementById("edit-overlay").classList.add("open");
+}
+
+function closeEditOverlay(){
+  document.getElementById("edit-overlay").classList.remove("open");
+}
+
+async function saveEditTrade(){
+  const id = document.getElementById("edit-trade-id").value;
+  const desc = document.getElementById("edit-desc").value.trim();
+  const tokens = getMyTokens();
+  if(!tokens[id]){ alert("You can only edit your own trades."); return; }
+  const btn = document.getElementById("edit-save-btn");
+  btn.disabled=true; btn.textContent="Saving...";
+  try{
+    const res = await fetch(`${SB_URL}/rest/v1/trades?id=eq.${id}&delete_token=eq.${tokens[id]}`,{
+      method:"PATCH",
+      headers:{...sbHeaders(),"Prefer":"return=minimal"},
+      body:JSON.stringify({description:desc||null})
+    });
+    if(!res.ok) throw new Error();
+    closeEditOverlay();
+    loadBoard();
+  } catch(e){ alert("Could not save. Try again."); }
+  btn.disabled=false; btn.textContent="Save Changes";
 }
 
 // Init auth immediately — no external library needed
