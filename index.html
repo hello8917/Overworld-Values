@@ -348,8 +348,8 @@ tr:hover td { background: var(--bg3); }
 .make-fair-btn:hover { background:rgba(128,192,64,0.2); border-color:var(--green); }
 .make-fair-btn:disabled { opacity:0.4; cursor:not-allowed; }
 /* MULTI-ADD */
-.multi-add-row { display:flex; gap:6px; align-items:center; }
-.multi-add-qty { width:56px; background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:7px 8px; color:var(--gold); font-family:"Cinzel",serif; font-size:13px; outline:none; text-align:center; flex-shrink:0; }
+.multi-add-row { display:flex; gap:6px; align-items:center; width:100%; }
+.multi-add-qty { width:54px; min-width:54px; max-width:54px; background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:7px 6px; color:var(--gold); font-family:"Cinzel",serif; font-size:13px; outline:none; text-align:center; flex-shrink:0; }
 .multi-add-qty:focus { border-color:var(--gold); }
 .multi-add-input { flex:1; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 14px; color:var(--text); font-family:"Lato",sans-serif; font-size:14px; outline:none; transition:border-color 0.2s; }
 .multi-add-input:focus { border-color:var(--gold); }
@@ -378,6 +378,59 @@ tr:hover td { background: var(--bg3); }
 .fair-btn:hover { border-color:var(--gold); color:var(--gold); }
 .fair-btn.primary { background:var(--gold-dark); border-color:var(--gold); color:var(--gold); }
 .fair-btn.primary:hover { background:#8a6c2a; }
+
+/* BADGES */
+.badge-dev { background:#0a1a2a; color:#5b9cf0; border:1px solid #2a5a9a; }
+.badge-helper { background:#1a0a0a; color:#c07030; border:1px solid #7a4010; }
+.badge-bugtest { background:#0a1a0a; color:#50c050; border:1px solid #207020; }
+.user-badge { display:inline-flex; align-items:center; gap:3px; border-radius:10px; padding:2px 8px; font-size:10px; font-weight:700; letter-spacing:0.04em; margin-left:4px; vertical-align:middle; }
+/* NOTIFICATION BELL */
+.notif-wrap { position:relative; margin-right:4px; }
+.notif-bell { background:none; border:1px solid var(--border); border-radius:8px; padding:5px 10px; color:var(--text-dim); cursor:pointer; font-size:15px; transition:all 0.15s; }
+.notif-bell:hover { border-color:var(--gold); color:var(--gold); }
+.notif-dot { position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:var(--red); border-radius:50%; font-size:9px; font-weight:700; color:#fff; display:flex; align-items:center; justify-content:center; display:none; }
+.notif-dropdown { position:absolute; right:0; top:calc(100% + 6px); background:var(--bg4); border:1px solid var(--border); border-radius:10px; width:320px; max-height:400px; overflow-y:auto; z-index:500; display:none; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
+.notif-dropdown.open { display:block; }
+.notif-header { padding:10px 14px; border-bottom:1px solid var(--border); font-family:"Cinzel",serif; font-size:12px; color:var(--gold); letter-spacing:0.06em; }
+.notif-item { padding:10px 14px; border-bottom:1px solid var(--bg3); cursor:pointer; transition:background 0.15s; }
+.notif-item:hover { background:var(--bg3); }
+.notif-item:last-child { border-bottom:none; }
+.notif-item-title { font-size:13px; color:var(--text); font-weight:700; margin-bottom:3px; }
+.notif-item-sub { font-size:11px; color:var(--text-dim); }
+.notif-empty { padding:20px; text-align:center; color:var(--text-dim); font-size:13px; }
+/* OFFER BUTTON */
+.tb-offer-btn { background:rgba(240,192,64,0.1); border:1px solid var(--gold-dark); border-radius:6px; color:var(--gold-dim); font-family:"Cinzel",serif; font-size:11px; padding:4px 10px; cursor:pointer; transition:all 0.15s; }
+.tb-offer-btn:hover { background:rgba(240,192,64,0.22); border-color:var(--gold); color:var(--gold); }
+/* TB PFP */
+.tb-pfp { width:32px; height:32px; border-radius:50%; border:1px solid var(--border); object-fit:cover; flex-shrink:0; }
+.tb-pfp-placeholder { width:32px; height:32px; border-radius:50%; background:var(--gold-deeper); border:1px solid var(--gold-dark); display:flex; align-items:center; justify-content:center; font-family:"Cinzel",serif; font-size:13px; color:var(--gold); font-weight:600; flex-shrink:0; }
+/* OFFER VIEW OVERLAY */
+.offer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; align-items:center; justify-content:center; }
+.offer-overlay.open { display:flex; }
+.offer-card { background:#1a1208; border:2px solid var(--gold-dark); border-radius:12px; padding:24px; width:min(520px,92vw); max-height:85vh; overflow-y:auto; }
+.offer-title { font-family:"Cinzel",serif; color:var(--gold); font-size:16px; text-align:center; margin-bottom:4px; letter-spacing:0.08em; }
+.offer-from { text-align:center; color:var(--text-dim); font-size:12px; margin-bottom:14px; }
+.offer-section { margin-bottom:12px; }
+.offer-section-label { font-family:"Cinzel",serif; font-size:11px; color:var(--gold-dim); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; }
+.offer-item { display:flex; align-items:center; gap:8px; padding:7px 10px; background:var(--bg3); border-radius:6px; margin-bottom:4px; font-size:13px; }
+.offer-item img { width:28px; height:28px; border-radius:4px; object-fit:cover; border:1px solid var(--border); }
+.offer-item-ph { width:28px; height:28px; border-radius:4px; border:1px solid var(--border); background:var(--bg2); display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--text-dim); }
+.offer-actions { display:flex; gap:8px; margin-top:14px; }
+.offer-btn { flex:1; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg3); color:var(--gold-dim); font-family:"Cinzel",serif; font-size:12px; cursor:pointer; transition:all 0.2s; text-align:center; }
+.offer-btn:hover { border-color:var(--gold); color:var(--gold); }
+.offer-btn.accept { background:#1a2800; border-color:#406000; color:var(--green); }
+.offer-btn.accept:hover { background:#223300; }
+.offer-btn.decline { background:#2a0a00; border-color:#603020; color:#e87060; }
+.offer-btn.decline:hover { background:#3a1000; }
+/* SEND OFFER BAR (shown in trade calc when offering) */
+.send-offer-bar { background:rgba(240,192,64,0.08); border-top:2px solid var(--gold-dark); padding:10px 20px; display:none; align-items:center; gap:10px; flex-shrink:0; }
+.send-offer-bar.active { display:flex; }
+.send-offer-label { flex:1; font-size:13px; color:var(--gold-dim); }
+.send-offer-label strong { color:var(--gold); }
+.send-offer-btn { padding:8px 20px; background:var(--gold-dark); border:1px solid var(--gold); border-radius:8px; color:var(--gold); font-family:"Cinzel",serif; font-size:12px; cursor:pointer; transition:all 0.2s; }
+.send-offer-btn:hover { background:#8a6c2a; }
+.cancel-offer-btn { padding:8px 14px; background:none; border:1px solid var(--border); border-radius:8px; color:var(--text-dim); font-family:"Lato",sans-serif; font-size:12px; cursor:pointer; transition:all 0.2s; }
+.cancel-offer-btn:hover { border-color:var(--red); color:var(--red); }
 </style>
 </head>
 <body>
@@ -530,6 +583,13 @@ tr:hover td { background: var(--bg3); }
       <button class="post-trade-btn" onclick="openPostTrade()">📣 Post to Board</button>
     </div>
   </div>
+  <!-- SEND OFFER BAR -->
+  <div class="send-offer-bar" id="send-offer-bar">
+    <div class="send-offer-label">Offering to <strong id="send-offer-target">—</strong>'s trade</div>
+    <input type="text" class="pt-input" id="send-offer-msg" placeholder="Add a message (optional)..." style="flex:1;max-width:240px;padding:7px 12px;font-size:13px">
+    <button class="send-offer-btn" onclick="sendOffer()">Send Offer</button>
+    <button class="cancel-offer-btn" onclick="cancelOffer()">Cancel</button>
+  </div>
 </div>
 
 <!-- TRADE BOARD PAGE -->
@@ -647,6 +707,23 @@ tr:hover td { background: var(--bg3); }
       <button class="pt-btn primary" id="pt-submit" onclick="submitTrade()">Post Trade</button>
       <button class="pt-btn" onclick="closePT()">Cancel</button>
     </div>
+  </div>
+</div>
+
+<!-- OFFER VIEW OVERLAY -->
+<div class="offer-overlay" id="offer-overlay" onclick="if(event.target===this)closeOfferOverlay()">
+  <div class="offer-card">
+    <div class="offer-title" id="offer-overlay-title">Trade Offer</div>
+    <div class="offer-from" id="offer-overlay-from"></div>
+    <div class="offer-section">
+      <div class="offer-section-label">They're Offering</div>
+      <div id="offer-overlay-items"></div>
+    </div>
+    <div id="offer-overlay-msg-wrap" style="margin-bottom:10px;display:none">
+      <div class="offer-section-label">Message</div>
+      <div id="offer-overlay-msg" style="font-size:13px;color:var(--text-dim);padding:8px 10px;background:var(--bg3);border-radius:6px"></div>
+    </div>
+    <div class="offer-actions" id="offer-overlay-actions"></div>
   </div>
 </div>
 
@@ -788,7 +865,18 @@ function renderAuthBar(user){
   const rname=currentProfile?.roblox_username?`<span class="auth-roblox">Roblox: ${currentProfile.roblox_username}</span>`:"";
   const trusted=currentProfile?.follower_count>=10?`<span class="badge-trusted">✓ Trusted</span>`:"";
   const clickName=currentProfile?.roblox_username?`onclick="openProfile('${currentProfile.roblox_username}')" style="cursor:pointer"`:"";
-  bar.innerHTML=`<div class="auth-user">${avatar}<div><span class="auth-username" ${clickName}>${dname}</span> ${trusted}${rname?` · ${rname}`:""}</div></div><button class="auth-btn signout" onclick="signOut()">Sign out</button>`;
+  bar.innerHTML=`
+    <div class="notif-wrap">
+      <button class="notif-bell" onclick="toggleNotifDropdown()" title="Notifications">🔔</button>
+      <div class="notif-dot" id="notif-dot"></div>
+      <div class="notif-dropdown" id="notif-dropdown">
+        <div class="notif-header">Notifications</div>
+        <div id="notif-list"><div class="notif-empty">No notifications</div></div>
+      </div>
+    </div>
+    <div class="auth-user">${avatar}<div><span class="auth-username" ${clickName}>${dname}</span> ${trusted}${rname?` · ${rname}`:""}</div></div>
+    <button class="auth-btn signout" onclick="signOut()">Sign out</button>`;
+  loadNotifications();
 }
 
 async function signInWithDiscord(){
@@ -855,7 +943,7 @@ function parseCSV(text){
     const cols=[];let cur="",inQ=false;
     for(let i=0;i<row.length;i++){const ch=row[i];if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cols.push(cur.trim());cur="";}else{cur+=ch;}}
     cols.push(cur.trim());
-    return{name:cols[0]||"",value:parseInt((cols[1]||"0").replace(/[^0-9]/g,""))||0,demand:cols[2]||"",image:cols[3]||"",category:cols[4]||""};
+    return{name:cols[0]||"",value:parseInt((cols[1]||"0").replace(/[^0-9]/g,""))||0,demand:cols[2]||"",image:cols[3]||"",category:cols[4]||"",min:parseInt((cols[5]||"0").replace(/[^0-9]/g,""))||0,max:parseInt((cols[6]||"0").replace(/[^0-9]/g,""))||0};
   }).filter(i=>i.name);
 }
 
@@ -1121,7 +1209,15 @@ async function loadBoard(){
         if(Array.isArray(fRows)&&fRows.length>=10) trustedSet.add(u);
       }catch(e){}
     }
-    allTrades=trades.map(t=>({...t,trusted:trustedSet.has(t.username)}));
+    // Fetch profiles for avatars and badges
+    const profileMap={};
+    for(const u of usernames){
+      try{
+        const pRows=await sbDB.select("profiles",`roblox_username=eq.${encodeURIComponent(u)}`);
+        if(Array.isArray(pRows)&&pRows[0]) profileMap[u]=pRows[0];
+      }catch(e){}
+    }
+    allTrades=trades.map(t=>({...t,trusted:trustedSet.has(t.username),avatar_url:profileMap[t.username]?.avatar_url||null,badges:profileMap[t.username]?.badges||[]}));
     if(currentUser) await loadMyFollowing();
     filterBoard();
   }catch(e){
@@ -1155,11 +1251,21 @@ function filterBoard(){
     <div class="tb-card">
       <div class="tb-card-header">
         <div class="tb-user">
-          <div class="tb-avatar">${(t.username||"?")[0].toUpperCase()}</div>
-          <div><div class="tb-username"><span class="tb-username-link" onclick="openProfile('${t.username}')">${t.username}</span>${t.trusted?`<span class="tb-trusted">✓ Trusted</span>`:""}</div><div class="tb-time">${timeAgo(t.created_at)}</div></div>
+          ${t.avatar_url?`<img class="tb-pfp" src="${t.avatar_url}" alt="${t.username}" onerror="this.outerHTML='<div class=\\'tb-pfp-placeholder\\'>${(t.username||"?")[0].toUpperCase()}</div>'">`:`<div class="tb-pfp-placeholder">${(t.username||"?")[0].toUpperCase()}</div>`}
+          <div>
+            <div class="tb-username">
+              <span class="tb-username-link" onclick="openProfile('${t.username}')">${t.username}</span>
+              ${t.trusted?`<span class="tb-trusted">✓ Trusted</span>`:""}
+              ${(t.badges||[]).includes("developer")?`<span class="user-badge badge-dev">&gt;_ Dev</span>`:""}
+              ${(t.badges||[]).includes("helper")?`<span class="user-badge badge-helper">⚙ Helper</span>`:""}
+              ${(t.badges||[]).includes("bugtester")?`<span class="user-badge badge-bugtest">🐛 Tester</span>`:""}
+            </div>
+            <div class="tb-time">${timeAgo(t.created_at)}</div>
+          </div>
         </div>
         <div class="tb-meta">
           <span class="tb-expires">expires ${expiresIn(t.created_at)}</span>
+          ${currentUser&&currentProfile?.roblox_username!==t.username?`<button class="tb-offer-btn" onclick="startOffer('${t.id}','${t.username}',${JSON.stringify(t.wanting).replace(/"/g,"'")})">Make Offer</button>`:""}
           ${isMine(t.id)?`<button class="tb-delete" onclick="deleteTrade('${t.id}',this)" title="Delete your listing">🗑️</button>`:""}
         </div>
       </div>
@@ -1318,6 +1424,158 @@ function copyResult(){
   });
 }
 
+
+// ---- OFFER SYSTEM ----
+let activeOfferTradeId = null;
+let activeOfferTarget = null;
+
+function startOffer(tradeId, targetUsername, wantingItems){
+  if(!currentUser || !currentProfile?.roblox_username){
+    alert("Sign in to make offers!"); return;
+  }
+  activeOfferTradeId = tradeId;
+  activeOfferTarget = targetUsername;
+  // Pre-fill your side with what THEY want (so you're offering what they want)
+  yourItems = [];
+  theirItems = [];
+  // Load their wanting items into your offer side
+  try {
+    const items = typeof wantingItems === "string" ? JSON.parse(wantingItems.replace(/'/g,'"')) : wantingItems;
+    if(Array.isArray(items)){
+      items.forEach(i=>{
+        const found = allItems.find(a=>a.name===i.name);
+        yourItems.push({...(found||i), qty:i.qty||1});
+      });
+    }
+  } catch(e){ console.warn("Could not parse wanting items", e); }
+  renderSide("you"); renderSide("them"); updateResult();
+  document.getElementById("send-offer-target").textContent = targetUsername;
+  document.getElementById("send-offer-bar").classList.add("active");
+  showPage("trade");
+  document.getElementById("nav-trade").classList.add("active");
+}
+
+function cancelOffer(){
+  activeOfferTradeId = null; activeOfferTarget = null;
+  document.getElementById("send-offer-bar").classList.remove("active");
+  document.getElementById("send-offer-msg").value = "";
+}
+
+async function sendOffer(){
+  if(!activeOfferTradeId||!currentUser) return;
+  const msg = document.getElementById("send-offer-msg").value.trim();
+  const you = yourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const offering = yourItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
+  if(!offering.length){ alert("Add items to your offer first!"); return; }
+  const btn = document.querySelector(".send-offer-btn");
+  btn.disabled = true; btn.textContent = "Sending...";
+  try {
+    const res = await fetch(`${SB_URL}/rest/v1/offers`,{
+      method:"POST",
+      headers:{...sbHeaders(),"Prefer":"return=minimal"},
+      body:JSON.stringify({
+        trade_id:activeOfferTradeId,
+        from_username:currentProfile.roblox_username,
+        from_user_id:currentUser.id,
+        offering,
+        offering_total:you,
+        message:msg||null,
+        status:"pending"
+      })
+    });
+    if(!res.ok) throw new Error();
+    cancelOffer();
+    alert("✓ Offer sent to "+activeOfferTarget+"!");
+  } catch(e){ alert("Failed to send offer. Try again."); }
+  btn.disabled = false; btn.textContent = "Send Offer";
+}
+
+// ---- NOTIFICATIONS ----
+async function loadNotifications(){
+  if(!currentUser||!currentProfile?.roblox_username) return;
+  try {
+    // Find all trades by this user
+    const myTrades = await sbDB.select("trades",`username=eq.${encodeURIComponent(currentProfile.roblox_username)}&order=created_at.desc`);
+    if(!Array.isArray(myTrades)||!myTrades.length) return;
+    const tradeIds = myTrades.map(t=>`"${t.id}"`).join(",");
+    // Get pending offers on those trades
+    const offers = await sbDB.select("offers",`trade_id=in.(${tradeIds})&status=eq.pending&order=created_at.desc`);
+    if(!Array.isArray(offers)||!offers.length){
+      document.getElementById("notif-dot").style.display="none";
+      document.getElementById("notif-list").innerHTML=`<div class="notif-empty">No new offers</div>`;
+      return;
+    }
+    document.getElementById("notif-dot").style.display="flex";
+    document.getElementById("notif-dot").textContent = offers.length > 9 ? "9+" : offers.length;
+    document.getElementById("notif-list").innerHTML = offers.map(o=>`
+      <div class="notif-item" onclick="viewOffer('${o.id}')">
+        <div class="notif-item-title">Offer from ${o.from_username}</div>
+        <div class="notif-item-sub">${o.offering_total.toLocaleString()} total · ${timeAgo(o.created_at)}</div>
+      </div>`).join("");
+  } catch(e){ console.warn("Notif error:", e); }
+}
+
+function toggleNotifDropdown(){
+  const dd = document.getElementById("notif-dropdown");
+  dd.classList.toggle("open");
+  loadNotifications();
+}
+
+async function viewOffer(offerId){
+  document.getElementById("notif-dropdown").classList.remove("open");
+  try {
+    const offers = await sbDB.select("offers",`id=eq.${offerId}`);
+    const o = Array.isArray(offers)&&offers[0];
+    if(!o){ alert("Offer not found."); return; }
+    document.getElementById("offer-overlay-title").textContent = `Offer from ${o.from_username}`;
+    document.getElementById("offer-overlay-from").textContent = `Offering total: ${o.offering_total.toLocaleString()}`;
+    function itemEl(i){ return `<div class="offer-item">${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\'offer-item-ph\'>?</div>'">`:`<div class="offer-item-ph">?</div>`}<span style="flex:1">${i.qty>1?i.qty+"x ":""}${i.name}</span><span style="color:var(--gold);font-family:'Cinzel',serif;font-size:12px">${(i.value*(i.qty||1)).toLocaleString()}</span></div>`; }
+    document.getElementById("offer-overlay-items").innerHTML = o.offering.map(itemEl).join("");
+    if(o.message){
+      document.getElementById("offer-overlay-msg-wrap").style.display="block";
+      document.getElementById("offer-overlay-msg").textContent = o.message;
+    } else { document.getElementById("offer-overlay-msg-wrap").style.display="none"; }
+    document.getElementById("offer-overlay-actions").innerHTML = o.status==="pending" ? `
+      <button class="offer-btn accept" onclick="respondToOffer('${o.id}','accepted')">✓ Accept</button>
+      <button class="offer-btn decline" onclick="respondToOffer('${o.id}','declined')">✗ Decline</button>
+      <button class="offer-btn" onclick="closeOfferOverlay()">Close</button>` :
+      `<div style="text-align:center;color:var(--text-dim);font-size:13px;width:100%">Status: ${o.status}</div><button class="offer-btn" onclick="closeOfferOverlay()">Close</button>`;
+    document.getElementById("offer-overlay").classList.add("open");
+  } catch(e){ alert("Could not load offer."); }
+}
+
+async function respondToOffer(offerId, status){
+  try {
+    await fetch(`${SB_URL}/rest/v1/offers?id=eq.${offerId}`,{
+      method:"PATCH",
+      headers:{...sbHeaders(),"Prefer":"return=minimal"},
+      body:JSON.stringify({status})
+    });
+    closeOfferOverlay();
+    loadNotifications();
+    alert(status==="accepted"?"✓ Offer accepted! Contact them to complete the trade.":"Offer declined.");
+  } catch(e){ alert("Failed to update offer."); }
+}
+
+function closeOfferOverlay(){ document.getElementById("offer-overlay").classList.remove("open"); }
+
+// Close notif dropdown on outside click
+document.addEventListener("click",e=>{
+  const dd=document.getElementById("notif-dropdown");
+  if(dd&&!e.target.closest(".notif-wrap")) dd.classList.remove("open");
+});
+
+// ---- BADGES ----
+function renderUserBadges(badges){
+  if(!badges||!badges.length) return "";
+  return badges.map(b=>{
+    if(b==="developer") return `<span class="user-badge badge-dev">&gt;_ Dev</span>`;
+    if(b==="helper") return `<span class="user-badge badge-helper">⚙ Helper</span>`;
+    if(b==="bugtester") return `<span class="user-badge badge-bugtest">🐛 Tester</span>`;
+    return "";
+  }).join("");
+}
+
 // Init auth immediately — no external library needed
 initAuth();
 
@@ -1401,7 +1659,7 @@ async function openProfile(username){
   } else {
     avatarEl.textContent = initial;
   }
-  document.getElementById("profile-hero-name").textContent = username;
+  document.getElementById("profile-hero-name").innerHTML = username + renderUserBadges(profile?.badges||[]);
   document.getElementById("profile-hero-discord").textContent = profile?.discord_username ? "Discord: "+profile.discord_username : "";
   document.getElementById("profile-hero-roblox").textContent = profile?.roblox_username || username;
 
