@@ -178,10 +178,10 @@ tr:hover td { background: var(--bg3); }
 .tb-refresh:hover { border-color: var(--gold); color: var(--gold); }
 .tb-count { padding: 7px 20px; background: var(--bg2); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-dim); flex-shrink: 0; }
 .tb-count span { color: var(--gold); font-weight: 700; }
-.tb-list { overflow-y: auto; flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-.tb-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; transition: border-color 0.2s; }
+.tb-list { overflow-y: auto; flex: 1; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; }
+.tb-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; transition: border-color 0.2s; }
 .tb-card:hover { border-color: var(--gold-dim); }
-.tb-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.tb-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .tb-user { display: flex; align-items: center; gap: 8px; }
 .tb-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--gold-deeper); border: 1px solid var(--gold-dark); display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold); font-weight: 600; flex-shrink: 0; }
 .tb-username { font-weight: 700; font-size: 14px; color: var(--text); }
@@ -190,18 +190,19 @@ tr:hover td { background: var(--bg3); }
 .tb-expires { font-size: 11px; color: var(--text-dim); }
 .tb-delete { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 15px; padding: 2px 6px; border-radius: 4px; transition: color 0.15s; }
 .tb-delete:hover { color: var(--red); }
-.tb-sides { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: start; }
+.tb-sides { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+.tb-sides-col { flex: 1; min-width: 0; }
 .tb-side-label { font-family: 'Cinzel', serif; font-size: 10px; color: var(--gold-dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
 .tb-items { display: flex; flex-direction: column; gap: 5px; }
-.tb-item { display: flex; align-items: center; gap: 7px; font-size: 13px; }
-.tb-item img { width: 28px; height: 28px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border); background: var(--bg2); flex-shrink: 0; }
-.tb-item-ph { width: 28px; height: 28px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-dim); flex-shrink: 0; }
+.tb-item { display: flex; align-items: center; gap: 5px; font-size: 12px; margin-bottom: 2px; }
+.tb-item img { width: 22px; height: 22px; border-radius: 3px; object-fit: cover; border: 1px solid var(--border); background: var(--bg2); flex-shrink: 0; }
+.tb-item-ph { width: 22px; height: 22px; border-radius: 3px; border: 1px solid var(--border); background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-dim); flex-shrink: 0; }
 .tb-item-name { flex: 1; color: var(--text); }
 .tb-item-val { color: var(--gold); font-family: 'Cinzel', serif; font-size: 11px; white-space: nowrap; }
-.tb-arrow { font-size: 22px; color: var(--gold-dim); text-align: center; padding-top: 20px; }
-.tb-totals { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-dim); }
+.tb-arrow { font-size: 14px; color: var(--gold-dim); flex-shrink: 0; padding: 0 2px; }
+.tb-totals { display: flex; justify-content: space-between; margin-top: 4px; padding-top: 4px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-dim); }
 .tb-totals strong { color: var(--gold); font-family: 'Cinzel', serif; }
-.tb-desc { margin-top: 8px; font-size: 13px; color: var(--text-dim); font-style: italic; border-top: 1px solid var(--border); padding-top: 8px; }
+.tb-desc { margin-top: 4px; font-size: 11px; color: var(--text-dim); font-style: italic; border-top: 1px solid var(--border); padding-top: 4px; }
 .tb-empty { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 14px; }
 .tb-empty-icon { font-size: 36px; margin-bottom: 12px; }
 .footer { text-align: center; padding: 12px; font-size: 11px; color: var(--text-dim); border-top: 1px solid var(--border); background: var(--bg3); letter-spacing: 0.08em; text-transform: uppercase; flex-shrink: 0; }
@@ -391,7 +392,7 @@ tr:hover td { background: var(--bg3); }
 .notif-bell { background:none; border:1px solid var(--border); border-radius:8px; padding:5px 10px; color:var(--text-dim); cursor:pointer; font-size:15px; transition:all 0.15s; }
 .notif-bell:hover { border-color:var(--gold); color:var(--gold); }
 .notif-dot { position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:var(--red); border-radius:50%; font-size:9px; font-weight:700; color:#fff; display:flex; align-items:center; justify-content:center; display:none; }
-.notif-dropdown { position:absolute; right:0; top:calc(100% + 6px); background:var(--bg4); border:1px solid var(--border); border-radius:10px; width:320px; max-height:400px; overflow-y:auto; z-index:500; display:none; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
+.notif-dropdown { position:fixed; right:8px; top:80px; background:var(--bg4); border:1px solid var(--border); border-radius:10px; width:300px; max-height:360px; overflow-y:auto; z-index:9999; display:none; box-shadow:0 4px 20px rgba(0,0,0,0.7); }
 .notif-dropdown.open { display:block; }
 .notif-header { padding:10px 14px; border-bottom:1px solid var(--border); font-family:"Cinzel",serif; font-size:12px; color:var(--gold); letter-spacing:0.06em; }
 .notif-item { padding:10px 14px; border-bottom:1px solid var(--bg3); cursor:pointer; transition:background 0.15s; }
@@ -757,16 +758,36 @@ textarea.feedback-input { min-height:100px; resize:vertical; }
 
 <!-- EDIT TRADE OVERLAY -->
 <div class="pt-overlay" id="edit-overlay" onclick="if(event.target===this)closeEditOverlay()">
-  <div class="pt-card">
+  <div class="pt-card" style="width:min(560px,95vw)">
     <div class="pt-title">✏️ Edit Your Trade</div>
     <input type="hidden" id="edit-trade-id">
-    <div class="pt-field">
-      <label class="pt-label">Description</label>
-      <input type="text" class="pt-input" id="edit-desc" placeholder="Update your description..." maxlength="120">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div>
+        <label class="pt-label">Your Offer</label>
+        <div class="add-area" style="margin-bottom:6px">
+          <div class="multi-add-row">
+            <input type="number" class="multi-add-qty" id="edit-qty-you" value="1" min="1">
+            <input type="text" class="multi-add-input" id="edit-search-you" placeholder="Add item..." oninput="editSearch('you')" onfocus="editOpenDrop('you')" autocomplete="off">
+          </div>
+          <div class="dropdown" id="edit-drop-you"></div>
+        </div>
+        <div id="edit-items-you" style="display:flex;flex-direction:column;gap:4px"></div>
+      </div>
+      <div>
+        <label class="pt-label">Wanted Items</label>
+        <div class="add-area" style="margin-bottom:6px">
+          <div class="multi-add-row">
+            <input type="number" class="multi-add-qty" id="edit-qty-them" value="1" min="1">
+            <input type="text" class="multi-add-input" id="edit-search-them" placeholder="Add item..." oninput="editSearch('them')" onfocus="editOpenDrop('them')" autocomplete="off">
+          </div>
+          <div class="dropdown" id="edit-drop-them"></div>
+        </div>
+        <div id="edit-items-them" style="display:flex;flex-direction:column;gap:4px"></div>
+      </div>
     </div>
     <div class="pt-field">
-      <label class="pt-label">Preview</label>
-      <div class="pt-preview" id="edit-preview"></div>
+      <label class="pt-label">Description (optional)</label>
+      <input type="text" class="pt-input" id="edit-desc" placeholder="Update your description..." maxlength="120">
     </div>
     <div class="pt-actions">
       <button class="pt-btn primary" id="edit-save-btn" onclick="saveEditTrade()">Save Changes</button>
@@ -1247,6 +1268,14 @@ function saveToken(id,token){const t=getMyTokens();t[id]=token;localStorage.setI
 function isMine(id){return!!getMyTokens()[id];}
 
 async function submitTrade(){
+  // Auth guard - must be logged in with a real session
+  if(!currentUser){ alert("You must be signed in to post trades!"); return; }
+  const token=sessionStorage.getItem("sb_access_token");
+  if(!token){ alert("Session expired. Please sign in again."); return; }
+  // Rate limit: max 3 trades per session
+  const recentKey="ow_posts_"+new Date().toDateString();
+  const postCount=parseInt(sessionStorage.getItem(recentKey)||"0");
+  if(postCount>=5){ alert("You can only post 5 trades per day. Please wait before posting more."); return; }
   const username=currentProfile?.roblox_username||"Unknown";
   const desc=document.getElementById("pt-desc").value.trim();
   const btn=document.getElementById("pt-submit");
@@ -1268,7 +1297,11 @@ async function submitTrade(){
         tradeData=await res2.json();
       }
     }catch(e){ console.warn("trade insert:", e); }
-    if(tradeData&&tradeData[0]&&tradeData[0].id) saveToken(tradeData[0].id,delete_token);
+    if(tradeData&&tradeData[0]&&tradeData[0].id){ 
+      saveToken(tradeData[0].id,delete_token);
+      const recentKey2="ow_posts_"+new Date().toDateString();
+      sessionStorage.setItem(recentKey2,String(parseInt(sessionStorage.getItem(recentKey2)||"0")+1));
+    }
     closePT();
     document.getElementById("pt-username").value="";
     document.getElementById("pt-desc").value="";
@@ -1355,9 +1388,9 @@ function filterBoard(){
         </div>
       </div>
       <div class="tb-sides">
-        <div><div class="tb-side-label">Offering</div><div class="tb-items">${itemsHTML(t.offering)}</div></div>
+        <div class="tb-sides-col"><div class="tb-side-label">Offering</div><div class="tb-items">${itemsHTML(t.offering)}</div></div>
         <div class="tb-arrow">→</div>
-        <div><div class="tb-side-label">Wanting</div><div class="tb-items">${itemsHTML(t.wanting)}</div></div>
+        <div class="tb-sides-col"><div class="tb-side-label">Wanting</div><div class="tb-items">${itemsHTML(t.wanting)}</div></div>
       </div>
       <div class="tb-totals">
         <span>Offering: <strong>${(t.offering_total||0).toLocaleString()}</strong></span>
@@ -1624,17 +1657,20 @@ async function viewOffer(offerId){
       const trades = await sbDB.select("trades", `id=eq.${o.trade_id}`);
       if(Array.isArray(trades)&&trades[0]) tradeWanting = trades[0].wanting||[];
     } catch(e){}
+    const offerTotalYou=o.offering.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+    const offerTotalThem=tradeWanting.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
     document.getElementById("offer-overlay-items").innerHTML = `
-      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:start;margin-bottom:8px">
-        <div>
-          <div style="font-family:'Cinzel',serif;font-size:10px;color:var(--gold-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">They Offer</div>
-          ${o.offering.map(itemEl).join("")}
-          <div style="font-size:11px;color:var(--text-dim);margin-top:4px">Total: <span style="color:var(--gold)">${o.offering_total.toLocaleString()}</span></div>
+      <div style="display:grid;grid-template-columns:1fr 40px 1fr;gap:10px;align-items:start;margin-bottom:8px">
+        <div style="background:var(--bg3);border-radius:8px;padding:10px">
+          <div style="font-family:'Cinzel',serif;font-size:10px;color:var(--gold-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">📦 Their Offer</div>
+          ${o.offering.map(itemEl).join("")||"<div style='color:var(--text-dim);font-size:12px'>Nothing</div>"}
+          <div style="font-size:11px;color:var(--text-dim);margin-top:6px;border-top:1px solid var(--border);padding-top:4px">Total: <span style="color:var(--gold)">${offerTotalYou.toLocaleString()}</span></div>
         </div>
-        <div style="font-size:20px;color:var(--gold-dim);padding-top:20px">⇌</div>
-        <div>
-          <div style="font-family:'Cinzel',serif;font-size:10px;color:var(--gold-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">You Give Up</div>
+        <div style="font-size:18px;color:var(--gold-dim);text-align:center;padding-top:24px">⇌</div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px">
+          <div style="font-family:'Cinzel',serif;font-size:10px;color:var(--gold-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">📦 You Give</div>
           ${tradeWanting.length?tradeWanting.map(itemEl).join(""):`<div style="color:var(--text-dim);font-size:12px">Nothing specified</div>`}
+          <div style="font-size:11px;color:var(--text-dim);margin-top:6px;border-top:1px solid var(--border);padding-top:4px">Total: <span style="color:var(--gold)">${offerTotalThem.toLocaleString()}</span></div>
         </div>
       </div>`;
     if(o.message){
@@ -1720,19 +1756,58 @@ async function submitFeedback(){
 
 
 // ---- EDIT TRADE ----
+let editYourItems=[], editTheirItems=[];
+
+function editSearch(side){
+  const q=document.getElementById(`edit-search-${side}`).value.toLowerCase();
+  const drop=document.getElementById(`edit-drop-${side}`);
+  if(!q){drop.classList.remove("open");drop.innerHTML="";return;}
+  const results=allItems.filter(i=>i.name.toLowerCase().includes(q)).slice(0,8);
+  if(!results.length){drop.innerHTML=`<div class="no-results">No items found</div>`;drop.classList.add("open");return;}
+  drop.innerHTML=results.map(i=>`<div class="dropdown-item" onclick="editAddItem('${side}',${allItems.indexOf(i)})">${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\'di-ph\'>?</div>'">`:`<div class="di-ph">?</div>`}<span class="di-name">${i.name}</span><span class="di-val">${i.value.toLocaleString()}</span></div>`).join("");
+  drop.classList.add("open");
+}
+function editOpenDrop(side){if(document.getElementById(`edit-search-${side}`).value)editSearch(side);}
+function editAddItem(side,idx){
+  const qtyEl=document.getElementById(`edit-qty-${side}`);
+  const qty=Math.max(1,parseInt(qtyEl?.value||"1")||1);
+  const item={...allItems[idx],qty};
+  if(side==="you")editYourItems.push(item);else editTheirItems.push(item);
+  document.getElementById(`edit-search-${side}`).value="";
+  if(qtyEl)qtyEl.value="1";
+  document.getElementById(`edit-drop-${side}`).classList.remove("open");
+  renderEditItems();
+}
+function editRemoveItem(side,idx){
+  if(side==="you")editYourItems.splice(idx,1);else editTheirItems.splice(idx,1);
+  renderEditItems();
+}
+function renderEditItems(){
+  ["you","them"].forEach(side=>{
+    const items=side==="you"?editYourItems:editTheirItems;
+    const el=document.getElementById(`edit-items-${side}`);
+    if(!items.length){el.innerHTML=`<div style="color:var(--text-dim);font-size:12px;padding:6px">Empty</div>`;return;}
+    el.innerHTML=items.map((i,idx)=>`<div style="display:flex;align-items:center;gap:6px;background:var(--bg2);border-radius:5px;padding:5px 8px;font-size:12px">
+      ${i.image?`<img src="${i.image}" style="width:20px;height:20px;border-radius:3px;object-fit:cover">`:""}
+      <span style="flex:1">${i.qty>1?i.qty+"x ":""}${i.name}</span>
+      <button onclick="editRemoveItem('${side}',${idx})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:13px">✕</button>
+    </div>`).join("");
+  });
+}
+
 function editTrade(id, tradeData){
   document.getElementById("edit-trade-id").value = id;
   document.getElementById("edit-desc").value = tradeData.description||"";
-  const yN=(tradeData.offering||[]).map(i=>(i.qty>1?`${i.qty}x `:"")+i.name).join(", ")||"Nothing";
-  const tN=(tradeData.wanting||[]).map(i=>(i.qty>1?`${i.qty}x `:"")+i.name).join(", ")||"Nothing";
-  document.getElementById("edit-preview").innerHTML=`
-    <div class="pt-preview-row"><span class="pt-preview-label">Offering:</span><span>${yN}</span></div>
-    <div class="pt-preview-row"><span class="pt-preview-label">Wanting:</span><span>${tN}</span></div>`;
+  editYourItems=(tradeData.offering||[]).map(i=>({...(allItems.find(a=>a.name===i.name)||i),qty:i.qty||1}));
+  editTheirItems=(tradeData.wanting||[]).map(i=>({...(allItems.find(a=>a.name===i.name)||i),qty:i.qty||1}));
+  renderEditItems();
   document.getElementById("edit-overlay").classList.add("open");
 }
 
 function closeEditOverlay(){
   document.getElementById("edit-overlay").classList.remove("open");
+  document.getElementById("edit-drop-you").classList.remove("open");
+  document.getElementById("edit-drop-them").classList.remove("open");
 }
 
 async function saveEditTrade(){
@@ -1740,20 +1815,35 @@ async function saveEditTrade(){
   const desc = document.getElementById("edit-desc").value.trim();
   const tokens = getMyTokens();
   if(!tokens[id]){ alert("You can only edit your own trades."); return; }
+  if(!editYourItems.length&&!editTheirItems.length){ alert("Add at least one item!"); return; }
   const btn = document.getElementById("edit-save-btn");
   btn.disabled=true; btn.textContent="Saving...";
+  const offering=editYourItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
+  const wanting=editTheirItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
+  const offering_total=editYourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
+  const wanting_total=editTheirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
   try{
     const res = await fetch(`${SB_URL}/rest/v1/trades?id=eq.${id}&delete_token=eq.${tokens[id]}`,{
       method:"PATCH",
       headers:{...sbHeaders(),"Prefer":"return=minimal"},
-      body:JSON.stringify({description:desc||null})
+      body:JSON.stringify({offering,wanting,offering_total,wanting_total,description:desc||null})
     });
-    if(!res.ok) throw new Error();
     closeEditOverlay();
     loadBoard();
   } catch(e){ alert("Could not save. Try again."); }
   btn.disabled=false; btn.textContent="Save Changes";
 }
+
+// Admin tools (callable from browser console)
+async function adminDeleteUser(username){
+  if(!confirm("Delete ALL trades by "+username+"?")) return;
+  const trades=await sbDB.select("trades","username=eq."+encodeURIComponent(username));
+  if(!Array.isArray(trades)||!trades.length){ alert("No trades found"); return; }
+  for(const t of trades) await fetch(SB_URL+"/rest/v1/trades?id=eq."+t.id,{method:"DELETE",headers:sbHeaders()});
+  alert("Deleted "+trades.length+" trades by "+username);
+  loadBoard();
+}
+window.adminDeleteUser=adminDeleteUser;
 
 // Init auth immediately — no external library needed
 initAuth();
@@ -1898,9 +1988,9 @@ async function openProfile(username){
         </div>
       </div>
       <div class="tb-sides">
-        <div><div class="tb-side-label">Offering</div><div class="tb-items">${itemsHTML(t.offering)}</div></div>
+        <div class="tb-sides-col"><div class="tb-side-label">Offering</div><div class="tb-items">${itemsHTML(t.offering)}</div></div>
         <div class="tb-arrow">→</div>
-        <div><div class="tb-side-label">Wanting</div><div class="tb-items">${itemsHTML(t.wanting)}</div></div>
+        <div class="tb-sides-col"><div class="tb-side-label">Wanting</div><div class="tb-items">${itemsHTML(t.wanting)}</div></div>
       </div>
       <div class="tb-totals">
         <span>Offering: <strong>${(t.offering_total||0).toLocaleString()}</strong></span>
