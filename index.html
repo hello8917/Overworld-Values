@@ -1295,7 +1295,7 @@ async function submitTrade(){
     try{
       const res2=await fetch(`${SB_URL}/rest/v1/trades`,{
         method:"POST",
-        headers:{...sbHeaders(),"Prefer":"return=representation"},
+        headers:{...sbHeaders(),"Authorization":"Bearer "+(sessionStorage.getItem("sb_access_token")||SB_KEY),"Prefer":"return=representation"},
         body:JSON.stringify({username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null,delete_token,user_id:currentUser.id})
       });
       if(res2.status===201||res2.status===200){
@@ -1423,12 +1423,13 @@ function startOfferById(id){
 }
 
 async function deleteTrade(id,btn){
-  const tokens=getMyTokens();
-  if(!tokens[id]){alert("You can only delete your own trades.");return;}
   if(!confirm("Delete your trade listing?"))return;
   btn.disabled=true;
   try{
-    await sbDB.delete("trades",`id=eq.${id}&delete_token=eq.${tokens[id]}`);
+    const token=sessionStorage.getItem("sb_access_token");
+    const headers={...sbHeaders()};
+    if(token) headers["Authorization"]="Bearer "+token;
+    await fetch(`${SB_URL}/rest/v1/trades?id=eq.${id}`,{method:"DELETE",headers});
     allTrades=allTrades.filter(t=>t.id!==id);filterBoard();
   }catch(e){alert("Could not delete. Try again.");btn.disabled=false;}
 }
@@ -1848,27 +1849,43 @@ async function saveEditTrade(){
   const offering_total=editYourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
   const wanting_total=editTheirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
   try{
-    const res = await fetch(`${SB_URL}/rest/v1/trades?id=eq.${id}&delete_token=eq.${tokens[id]}`,{
+    const token=sessionStorage.getItem("sb_access_token");
+    const authHeaders={...sbHeaders()};
+    if(token) authHeaders["Authorization"]="Bearer "+token;
+    const res = await fetch(`${SB_URL}/rest/v1/trades?id=eq.${id}`,{
       method:"PATCH",
-      headers:{...sbHeaders(),"Prefer":"return=minimal"},
+      headers:{...authHeaders,"Prefer":"return=representation"},
       body:JSON.stringify({offering,wanting,offering_total,wanting_total,description:desc||null})
     });
-    closeEditOverlay();
-    loadBoard();
-  } catch(e){ alert("Could not save. Try again."); }
+    const result = await res.json().catch(()=>({}));
+    console.log("PATCH result:", res.status, result);
+    if(res.status===200||res.status===204){
+      closeEditOverlay();
+      loadBoard();
+    } else {
+      alert("Save failed ("+res.status+"): "+JSON.stringify(result));
+    }
+  } catch(e){ alert("Could not save. Error: "+e.message); }
   btn.disabled=false; btn.textContent="Save Changes";
 }
 
 // Admin tools (callable from browser console)
 async function adminDeleteUser(username){
   if(!confirm("Delete ALL trades by "+username+"?")) return;
-  const trades=await sbDB.select("trades","username=eq."+encodeURIComponent(username));
-  if(!Array.isArray(trades)||!trades.length){ alert("No trades found"); return; }
-  for(const t of trades) await fetch(SB_URL+"/rest/v1/trades?id=eq."+t.id,{method:"DELETE",headers:sbHeaders()});
-  alert("Deleted "+trades.length+" trades by "+username);
-  loadBoard();
+  // Delete all at once using username filter
+  const res=await fetch(SB_URL+"/rest/v1/trades?username=eq."+encodeURIComponent(username),{method:"DELETE",headers:{...sbHeaders(),"Authorization":"Bearer "+(sessionStorage.getItem("sb_access_token")||SB_KEY)}});
+  alert("Deleted trades by "+username+" (status: "+res.status+")");
+  allTrades=allTrades.filter(t=>t.username!==username);
+  filterBoard();
+}
+async function adminDeleteAll(){
+  if(!confirm("Delete ALL trades from ALL users? This cannot be undone!")) return;
+  const res=await fetch(SB_URL+"/rest/v1/trades?id=neq.00000000-0000-0000-0000-000000000000",{method:"DELETE",headers:{...sbHeaders(),"Authorization":"Bearer "+(sessionStorage.getItem("sb_access_token")||SB_KEY)}});
+  alert("Deleted all trades (status: "+res.status+")");
+  allTrades=[];filterBoard();
 }
 window.adminDeleteUser=adminDeleteUser;
+window.adminDeleteAll=adminDeleteAll;
 
 async function adminBanUser(username){
   // Find the user_id from their trades
