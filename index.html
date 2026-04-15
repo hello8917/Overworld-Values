@@ -1272,6 +1272,11 @@ async function submitTrade(){
   if(!currentUser){ alert("You must be signed in to post trades!"); return; }
   const token=sessionStorage.getItem("sb_access_token");
   if(!token){ alert("Session expired. Please sign in again."); return; }
+  // Check if user is banned
+  try{
+    const bans=await sbDB.select("banned_users","user_id=eq."+currentUser.id);
+    if(Array.isArray(bans)&&bans.length>0){ alert("Your account has been banned from posting trades."); return; }
+  }catch(e){}
   // Rate limit: max 3 trades per session
   const recentKey="ow_posts_"+new Date().toDateString();
   const postCount=parseInt(sessionStorage.getItem(recentKey)||"0");
@@ -1291,7 +1296,7 @@ async function submitTrade(){
       const res2=await fetch(`${SB_URL}/rest/v1/trades`,{
         method:"POST",
         headers:{...sbHeaders(),"Prefer":"return=representation"},
-        body:JSON.stringify({username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null,delete_token})
+        body:JSON.stringify({username,offering,wanting,offering_total:you,wanting_total:them,description:desc||null,delete_token,user_id:currentUser.id})
       });
       if(res2.status===201||res2.status===200){
         tradeData=await res2.json();
@@ -1365,6 +1370,8 @@ function filterBoard(){
     if(!items||!items.length)return`<span style="color:var(--text-dim);font-size:12px">Nothing</span>`;
     return items.map(i=>`<div class="tb-item">${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\\'tb-item-ph\\'>?</div>'">`:`<div class="tb-item-ph">?</div>`}<span class="tb-item-name">${i.qty>1?`${i.qty}x `:""} ${i.name}</span><span class="tb-item-val">${(i.value*(i.qty||1)).toLocaleString()}</span></div>`).join("");
   }
+  // Store trades for lookup
+  list.forEach(t=>{ tradeMap[t.id]=t; });
   el.innerHTML=list.map(t=>`
     <div class="tb-card">
       <div class="tb-card-header">
@@ -1383,8 +1390,8 @@ function filterBoard(){
         </div>
         <div class="tb-meta">
           <span class="tb-expires">expires ${expiresIn(t.created_at)}</span>
-          ${currentUser&&currentProfile?.roblox_username!==t.username?`<button class="tb-offer-btn" onclick="startOffer('${t.id}','${t.username}',${JSON.stringify(t.wanting).replace(/"/g,"'")})">Make Offer</button>`:""}
-          ${isMine(t.id)?`<button class="tb-offer-btn" style="margin-right:4px" onclick="editTrade('${t.id}',${JSON.stringify(t).replace(/`/g,"'")})">✏️ Edit</button><button class="tb-delete" onclick="deleteTrade('${t.id}',this)" title="Delete your listing">🗑️</button>`:""}
+          ${currentUser&&currentProfile?.roblox_username!==t.username?`<button class="tb-offer-btn" onclick="startOfferById('${t.id}')">Make Offer</button>`:""}
+          ${isMine(t.id)?`<button class="tb-offer-btn" style="margin-right:4px" onclick="editTradeById('${t.id}')">✏️ Edit</button><button class="tb-delete" onclick="deleteTrade('${t.id}',this)" title="Delete">🗑️</button>`:""}
         </div>
       </div>
       <div class="tb-sides">
@@ -1398,6 +1405,21 @@ function filterBoard(){
       </div>
       ${t.description?`<div class="tb-desc">"${t.description}"</div>`:""}
     </div>`).join("");
+}
+
+// Trade data store - populated when board loads
+const tradeMap = {};
+
+function editTradeById(id){
+  const t = tradeMap[id];
+  if(!t){ alert("Trade data not found. Please refresh the board."); return; }
+  editTrade(id, t);
+}
+
+function startOfferById(id){
+  const t = tradeMap[id];
+  if(!t){ alert("Trade data not found. Please refresh the board."); return; }
+  startOffer(t.id, t.username, t.wanting, t.offering);
 }
 
 async function deleteTrade(id,btn){
@@ -1548,25 +1570,28 @@ function copyResult(){
 let activeOfferTradeId = null;
 let activeOfferTarget = null;
 
-function startOffer(tradeId, targetUsername, wantingItems){
+function startOffer(tradeId, targetUsername, wantingItems, offeringItems){
   if(!currentUser || !currentProfile?.roblox_username){
     alert("Sign in to make offers!"); return;
   }
   activeOfferTradeId = tradeId;
   activeOfferTarget = targetUsername;
-  // Pre-fill your side with what THEY want (so you're offering what they want)
   yourItems = [];
   theirItems = [];
-  // Load their wanting items into your offer side
-  try {
-    const items = typeof wantingItems === "string" ? JSON.parse(wantingItems.replace(/'/g,'"')) : wantingItems;
-    if(Array.isArray(items)){
-      items.forEach(i=>{
-        const found = allItems.find(a=>a.name===i.name);
-        yourItems.push({...(found||i), qty:i.qty||1});
-      });
-    }
-  } catch(e){ console.warn("Could not parse wanting items", e); }
+  // Pre-fill YOUR side with what THEY want
+  if(Array.isArray(wantingItems)){
+    wantingItems.forEach(i=>{
+      const found = allItems.find(a=>a.name===i.name);
+      yourItems.push({...(found||i), qty:i.qty||1});
+    });
+  }
+  // Pre-fill THEIR side with what THEY are offering
+  if(Array.isArray(offeringItems)){
+    offeringItems.forEach(i=>{
+      const found = allItems.find(a=>a.name===i.name);
+      theirItems.push({...(found||i), qty:i.qty||1});
+    });
+  }
   renderSide("you"); renderSide("them"); updateResult();
   document.getElementById("send-offer-target").textContent = targetUsername;
   document.getElementById("send-offer-bar").classList.add("active");
@@ -1844,6 +1869,21 @@ async function adminDeleteUser(username){
   loadBoard();
 }
 window.adminDeleteUser=adminDeleteUser;
+
+async function adminBanUser(username){
+  // Find the user_id from their trades
+  const trades=await sbDB.select("trades","username=eq."+encodeURIComponent(username)+"&limit=1");
+  if(!Array.isArray(trades)||!trades.length||!trades[0].user_id){ alert("Could not find user_id for "+username+". They may not have a linked account."); return; }
+  const userId=trades[0].user_id;
+  if(!confirm("Ban "+username+" (user_id: "+userId+")? This will prevent them from posting trades.")) return;
+  // Insert ban
+  await fetch(SB_URL+"/rest/v1/banned_users",{method:"POST",headers:{...sbHeaders(),"Prefer":"return=minimal"},body:JSON.stringify({user_id:userId,discord_id:username,reason:"Admin ban"})});
+  // Delete all their trades
+  for(const t of trades) await fetch(SB_URL+"/rest/v1/trades?user_id=eq."+userId,{method:"DELETE",headers:sbHeaders()});
+  alert("Banned "+username+" and deleted their trades.");
+  loadBoard();
+}
+window.adminBanUser=adminBanUser;
 
 // Init auth immediately — no external library needed
 initAuth();
