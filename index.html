@@ -756,46 +756,6 @@ textarea.feedback-input { min-height:100px; resize:vertical; }
   </div>
 </div>
 
-<!-- EDIT TRADE OVERLAY -->
-<div class="pt-overlay" id="edit-overlay" onclick="if(event.target===this)closeEditOverlay()">
-  <div class="pt-card" style="width:min(560px,95vw)">
-    <div class="pt-title">✏️ Edit Your Trade</div>
-    <input type="hidden" id="edit-trade-id">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-      <div>
-        <label class="pt-label">Your Offer</label>
-        <div class="add-area" style="margin-bottom:6px">
-          <div class="multi-add-row">
-            <input type="number" class="multi-add-qty" id="edit-qty-you" value="1" min="1">
-            <input type="text" class="multi-add-input" id="edit-search-you" placeholder="Add item..." oninput="editSearch('you')" onfocus="editOpenDrop('you')" autocomplete="off">
-          </div>
-          <div class="dropdown" id="edit-drop-you"></div>
-        </div>
-        <div id="edit-items-you" style="display:flex;flex-direction:column;gap:4px"></div>
-      </div>
-      <div>
-        <label class="pt-label">Wanted Items</label>
-        <div class="add-area" style="margin-bottom:6px">
-          <div class="multi-add-row">
-            <input type="number" class="multi-add-qty" id="edit-qty-them" value="1" min="1">
-            <input type="text" class="multi-add-input" id="edit-search-them" placeholder="Add item..." oninput="editSearch('them')" onfocus="editOpenDrop('them')" autocomplete="off">
-          </div>
-          <div class="dropdown" id="edit-drop-them"></div>
-        </div>
-        <div id="edit-items-them" style="display:flex;flex-direction:column;gap:4px"></div>
-      </div>
-    </div>
-    <div class="pt-field">
-      <label class="pt-label">Description (optional)</label>
-      <input type="text" class="pt-input" id="edit-desc" placeholder="Update your description..." maxlength="120">
-    </div>
-    <div class="pt-actions">
-      <button class="pt-btn primary" id="edit-save-btn" onclick="saveEditTrade()">Save Changes</button>
-      <button class="pt-btn" onclick="closeEditOverlay()">Cancel</button>
-    </div>
-  </div>
-</div>
-
 <!-- OFFER VIEW OVERLAY -->
 <div class="offer-overlay" id="offer-overlay" onclick="if(event.target===this)closeOfferOverlay()">
   <div class="offer-card">
@@ -1277,10 +1237,23 @@ async function submitTrade(){
     const bans=await sbDB.select("banned_users","user_id=eq."+currentUser.id);
     if(Array.isArray(bans)&&bans.length>0){ alert("Your account has been banned from posting trades."); return; }
   }catch(e){}
-  // Rate limit: max 3 trades per session
+  // Rate limit: max 5 trades per day
   const recentKey="ow_posts_"+new Date().toDateString();
   const postCount=parseInt(sessionStorage.getItem(recentKey)||"0");
-  if(postCount>=5){ alert("You can only post 5 trades per day. Please wait before posting more."); return; }
+  if(postCount>=5){ alert("You can only post 5 trades per day."); return; }
+  // Validate items are real items from the value list
+  const allNames=new Set(allItems.map(i=>i.name));
+  const invalidOffering=yourItems.filter(i=>!allNames.has(i.name));
+  const invalidWanting=theirItems.filter(i=>!allNames.has(i.name));
+  if(invalidOffering.length||invalidWanting.length){
+    alert("All items must be valid items from the value list.");
+    return;
+  }
+  // Validate username is their actual roblox username
+  if(!currentProfile?.roblox_username){
+    alert("You must set your Roblox username in your profile first.");
+    return;
+  }
   const username=currentProfile?.roblox_username||"Unknown";
   const desc=document.getElementById("pt-desc").value.trim();
   const btn=document.getElementById("pt-submit");
@@ -1391,7 +1364,7 @@ function filterBoard(){
         <div class="tb-meta">
           <span class="tb-expires">expires ${expiresIn(t.created_at)}</span>
           ${currentUser&&currentProfile?.roblox_username!==t.username?`<button class="tb-offer-btn" onclick="startOfferById('${t.id}')">Make Offer</button>`:""}
-          ${isMine(t.id)?`<button class="tb-offer-btn" style="margin-right:4px" onclick="editTradeById('${t.id}')">✏️ Edit</button><button class="tb-delete" onclick="deleteTrade('${t.id}',this)" title="Delete">🗑️</button>`:""}
+          ${isMine(t.id)?`<button class="tb-delete" onclick="deleteTrade('${t.id}',this)" title="Delete">🗑️</button>`:""}
         </div>
       </div>
       <div class="tb-sides">
@@ -1409,12 +1382,6 @@ function filterBoard(){
 
 // Trade data store - populated when board loads
 const tradeMap = {};
-
-function editTradeById(id){
-  const t = tradeMap[id];
-  if(!t){ alert("Trade data not found. Please refresh the board."); return; }
-  editTrade(id, t);
-}
 
 function startOfferById(id){
   const t = tradeMap[id];
@@ -1780,94 +1747,6 @@ async function submitFeedback(){
   btn.disabled = false; btn.textContent = "Send Feedback";
 }
 
-
-// ---- EDIT TRADE ----
-let editYourItems=[], editTheirItems=[];
-
-function editSearch(side){
-  const q=document.getElementById(`edit-search-${side}`).value.toLowerCase();
-  const drop=document.getElementById(`edit-drop-${side}`);
-  if(!q){drop.classList.remove("open");drop.innerHTML="";return;}
-  const results=allItems.filter(i=>i.name.toLowerCase().includes(q)).slice(0,8);
-  if(!results.length){drop.innerHTML=`<div class="no-results">No items found</div>`;drop.classList.add("open");return;}
-  drop.innerHTML=results.map(i=>`<div class="dropdown-item" onclick="editAddItem('${side}',${allItems.indexOf(i)})">${i.image?`<img src="${i.image}" alt="${i.name}" onerror="this.outerHTML='<div class=\'di-ph\'>?</div>'">`:`<div class="di-ph">?</div>`}<span class="di-name">${i.name}</span><span class="di-val">${i.value.toLocaleString()}</span></div>`).join("");
-  drop.classList.add("open");
-}
-function editOpenDrop(side){if(document.getElementById(`edit-search-${side}`).value)editSearch(side);}
-function editAddItem(side,idx){
-  const qtyEl=document.getElementById(`edit-qty-${side}`);
-  const qty=Math.max(1,parseInt(qtyEl?.value||"1")||1);
-  const item={...allItems[idx],qty};
-  if(side==="you")editYourItems.push(item);else editTheirItems.push(item);
-  document.getElementById(`edit-search-${side}`).value="";
-  if(qtyEl)qtyEl.value="1";
-  document.getElementById(`edit-drop-${side}`).classList.remove("open");
-  renderEditItems();
-}
-function editRemoveItem(side,idx){
-  if(side==="you")editYourItems.splice(idx,1);else editTheirItems.splice(idx,1);
-  renderEditItems();
-}
-function renderEditItems(){
-  ["you","them"].forEach(side=>{
-    const items=side==="you"?editYourItems:editTheirItems;
-    const el=document.getElementById(`edit-items-${side}`);
-    if(!items.length){el.innerHTML=`<div style="color:var(--text-dim);font-size:12px;padding:6px">Empty</div>`;return;}
-    el.innerHTML=items.map((i,idx)=>`<div style="display:flex;align-items:center;gap:6px;background:var(--bg2);border-radius:5px;padding:5px 8px;font-size:12px">
-      ${i.image?`<img src="${i.image}" style="width:20px;height:20px;border-radius:3px;object-fit:cover">`:""}
-      <span style="flex:1">${i.qty>1?i.qty+"x ":""}${i.name}</span>
-      <button onclick="editRemoveItem('${side}',${idx})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:13px">✕</button>
-    </div>`).join("");
-  });
-}
-
-function editTrade(id, tradeData){
-  document.getElementById("edit-trade-id").value = id;
-  document.getElementById("edit-desc").value = tradeData.description||"";
-  editYourItems=(tradeData.offering||[]).map(i=>({...(allItems.find(a=>a.name===i.name)||i),qty:i.qty||1}));
-  editTheirItems=(tradeData.wanting||[]).map(i=>({...(allItems.find(a=>a.name===i.name)||i),qty:i.qty||1}));
-  renderEditItems();
-  document.getElementById("edit-overlay").classList.add("open");
-}
-
-function closeEditOverlay(){
-  document.getElementById("edit-overlay").classList.remove("open");
-  document.getElementById("edit-drop-you").classList.remove("open");
-  document.getElementById("edit-drop-them").classList.remove("open");
-}
-
-async function saveEditTrade(){
-  const id = document.getElementById("edit-trade-id").value;
-  const desc = document.getElementById("edit-desc").value.trim();
-  const tokens = getMyTokens();
-  if(!tokens[id]){ alert("You can only edit your own trades."); return; }
-  if(!editYourItems.length&&!editTheirItems.length){ alert("Add at least one item!"); return; }
-  const btn = document.getElementById("edit-save-btn");
-  btn.disabled=true; btn.textContent="Saving...";
-  const offering=editYourItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
-  const wanting=editTheirItems.map(i=>({name:i.name,value:i.value,qty:i.qty||1,image:i.image||""}));
-  const offering_total=editYourItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
-  const wanting_total=editTheirItems.reduce((s,i)=>s+(i.value*(i.qty||1)),0);
-  try{
-    const token=sessionStorage.getItem("sb_access_token");
-    const authHeaders={...sbHeaders()};
-    if(token) authHeaders["Authorization"]="Bearer "+token;
-    const res = await fetch(`${SB_URL}/rest/v1/trades?id=eq.${id}`,{
-      method:"PATCH",
-      headers:{...authHeaders,"Prefer":"return=representation"},
-      body:JSON.stringify({offering,wanting,offering_total,wanting_total,description:desc||null})
-    });
-    const result = await res.json().catch(()=>({}));
-    console.log("PATCH result:", res.status, result);
-    if(res.status===200||res.status===204){
-      closeEditOverlay();
-      loadBoard();
-    } else {
-      alert("Save failed ("+res.status+"): "+JSON.stringify(result));
-    }
-  } catch(e){ alert("Could not save. Error: "+e.message); }
-  btn.disabled=false; btn.textContent="Save Changes";
-}
 
 // Admin tools (callable from browser console)
 async function adminDeleteUser(username){
